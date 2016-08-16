@@ -2,7 +2,7 @@
 
 
 ## Fetching from Medium
-The method that best fits the JSON schema is the RSS feed. It is XML with CDATA HTML tags inside. We can use SimpleXML parser and some "well tested" traversing to grab images and paragraph text that we need.
+The method that best fits the JSON schema is the RSS feed. It is XML with CDATA HTML tags inside. We can use SimpleXML or Symfony DOM parser and some "well tested" traversing to grab images and paragraph text that we need.
 
 If we can compose an fixed identifier from the RSS feed we can use this to identify a delta each time we scrape the RSS from our database. This will allow us to have idempotent updates that we can run as often as we need.
 
@@ -104,6 +104,6 @@ If we are using a schedule for updating the RSS feed it makes sense to use Expir
 Unit tests for any functional components such as the XML parsing and image processing is vital.
 Controller tests with data fixtures will provide better coverage for the functionality.
 [needs name] variation test — swapping out medium.com/@elife for large list of other medium endpoints and testing large volume of variations. (for development to discover bugs, not CI)
-
+The tests should also pass the responses through https://github.com/elifesciences/api-validator-php (like https://github.com/elifesciences/api-dummy/blob/develop/src/validate.php#L36-L51).
 
 
