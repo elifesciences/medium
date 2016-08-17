@@ -129,6 +129,10 @@
             "install-path": "vendor/symfony/process",
             "installer": "composer"
         },
+        "symfony/psr-http-message-bridge": {
+            "install-path": "vendor/symfony/psr-http-message-bridge",
+            "installer": "composer"
+        },
         "symfony/routing": {
             "install-path": "vendor/symfony/routing",
             "installer": "composer"
@@ -155,6 +159,10 @@
         },
         "webmozart/path-util": {
             "install-path": "vendor/webmozart/path-util",
+            "installer": "composer"
+        },
+        "zendframework/zend-diactoros": {
+            "install-path": "vendor/zendframework/zend-diactoros",
             "installer": "composer"
         }
     }

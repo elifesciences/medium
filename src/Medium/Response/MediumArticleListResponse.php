@@ -4,7 +4,7 @@ namespace eLife\Medium\Response;
 
 use JMS\Serializer\Annotation\Type;
 
-class MediumArticleListResponse
+class MediumArticleListResponse implements HasHeaders
 {
 
     /**
@@ -15,6 +15,12 @@ class MediumArticleListResponse
     public function __construct(MediumArticleResponse ...$mediumArticles)
     {
         $this->items = $mediumArticles;
+    }
+
+    public function getHeaders() {
+        return [
+            'Content-Type' => ContentType::MEDIUM_ARTICLE
+        ];
     }
 
 }

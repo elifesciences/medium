@@ -2,6 +2,8 @@
 
 namespace eLife\Medium;
 
+use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
+use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
 use eLife\Medium\Model\Image;
 use eLife\Medium\Response\ExceptionResponse;
 use eLife\Medium\Response\ImageResponse;
@@ -10,10 +12,14 @@ use eLife\Medium\Response\MediumArticleResponse;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Silex\Application;
 use JMS\Serializer\SerializerBuilder;
+use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
+use Webmozart\Json\JsonDecoder;
 use Throwable;
+use DateTime;
+use LogicException;
 
 class Kernel
 {
@@ -34,15 +40,11 @@ class Kernel
         self::dependencies($app);
         // Routes
         self::routes($app);
-        // Post-hooks
-        $app->after(function (Request $request, Response $response) {
-            // Login here.
-            $response->headers->add(['Content-Type' => 'application/json']);
-        }, 1);
+        // Validate.
         $app->after(function (Request $request, Response $response) use ($app) {
             // Validation.
             if ($app['config']['validate']) {
-                // Do stuff.
+                self::validate($app, $request, $response);
             }
         }, 2);
 
@@ -59,7 +61,7 @@ class Kernel
     public static function loadConfig()
     {
         if (!file_exists(self::CONFIG)) {
-            throw new \LogicException('Configuration file not found');
+            throw new LogicException('Configuration file not found');
         }
         return Yaml::parse(file_get_contents(self::CONFIG));
     }
@@ -70,6 +72,32 @@ class Kernel
         $app['serializer'] = function () {
             return SerializerBuilder::create()->setCacheDir(self::ROOT . '/cache')->build();
         };
+        // Puli.
+        $app['puli.factory'] = function () {
+            $factoryClass = PULI_FACTORY_CLASS;
+            return new $factoryClass();
+        };
+        // Puli repo.
+        $app['puli.repository'] = function (Application $app) {
+            return $app['puli.factory']->createRepository();
+        };
+        // PSR-7 Bridge
+        $app['psr7.bridge'] = function (Application $app) {
+            return new DiactorosFactory();
+        };
+
+        $app['puli.validator'] = function (Application $app) {
+            return new JsonMessageValidator(
+                new PuliSchemaFinder($app['puli.repository']),
+                new JsonDecoder()
+            );
+        };
+    }
+
+    public static function validate(Application $app, Request $request, Response $response) {
+        $app['puli.validator']->validate(
+            $app['psr7.bridge']->createResponse($response)
+        );
     }
 
     public static function routes(Application $app)
@@ -82,7 +110,7 @@ class Kernel
                     'https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18',
                     'Hardened hearts reveal organ evolution',
                     'Fossilized hearts have been found in specimens of an extinct fish in Brazil.',
-                    new \DateTime(),
+                    new DateTime(),
                     new ImageResponse('alt text', Image::basic('cdn-images-1.medium.com', '1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg'))
                 )
             );
@@ -90,15 +118,11 @@ class Kernel
             // Make the JSON.
             $json = $app['serializer']->serialize($data, 'json');
 
-            // TBC: validate.
-            // $messageValidator = new JsonMessageValidator(new PuliSchemaFinder($resourceRepository), new JsonDecoder());
-            // $messageValidator->validate($json);
-
             // Get repo
             // Make query based on params (none)
             // return response object
             // serialize
-            return new Response($json, 200);
+            return new Response($json, 200, $data->getHeaders());
         });
     }
 
