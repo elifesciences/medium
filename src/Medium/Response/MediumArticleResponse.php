@@ -6,6 +6,7 @@ namespace eLife\Medium\Response;
 use JMS\Serializer\Annotation\Type;
 
 use DateTime;
+use DateTimeImmutable;
 
 class MediumArticleResponse
 {
@@ -39,12 +40,12 @@ class MediumArticleResponse
         string $uri,
         string $title,
         string $impactStatement,
-        DateTime $published,
+        DateTimeImmutable $published,
         ImageResponse $image
     ) {
         $this->uri = $uri;
         $this->title = $title;
-        $this->published = $published;
+        $this->published = DateTime::createFromFormat('Y-m-d\TH:i:sO', $published->format('Y-m-d\TH:i:sO'), $published->getTimezone());
         $this->impactStatement = $impactStatement;
         $this->image = $image;
     }

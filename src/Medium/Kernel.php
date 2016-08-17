@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\Json\JsonDecoder;
 use Throwable;
-use DateTime;
+use DateTimeImmutable;
 use LogicException;
 
 class Kernel
@@ -110,7 +110,7 @@ class Kernel
                     'https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18',
                     'Hardened hearts reveal organ evolution',
                     'Fossilized hearts have been found in specimens of an extinct fish in Brazil.',
-                    new DateTime(),
+                    new DateTimeImmutable(),
                     new ImageResponse('alt text', Image::basic('cdn-images-1.medium.com', '1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg'))
                 )
             );
