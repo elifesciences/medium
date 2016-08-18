@@ -30,11 +30,11 @@ final class MediumArticleListResponse implements HasHeaders
 
     // This can be moved out to a separate mapper at some point,
     // but for simplicity, I've made it a static constructor.
-    public static function mapFromEntities(array $articles) {
+    public static function mapFromEntities($articles) {
         Assertion::allIsInstanceOf($articles, MediumArticle::class);
 
         return new static(
-            ...array_map(function(MediumArticle $article) {
+            ...self::map(function(MediumArticle $article) {
                 return new MediumArticleResponse(
                     $article->getUri(),
                     $article->getTitle(),
@@ -44,6 +44,14 @@ final class MediumArticleListResponse implements HasHeaders
                 );
             }, $articles)
         );
+    }
+
+    public static function map(callable $fn, $items) {
+        $r = [];
+        foreach ($items as $k => $i) {
+            $r[$k] = $fn($i);
+        }
+        return $r;
     }
 
 }

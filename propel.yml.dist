@@ -16,6 +16,7 @@ propel:
         sqlDir: cache/propel/sql
         phpConfDir: cache/propel/conf
 
+
 #   database:
 #       connections:
 #           default:
