@@ -2,3 +2,6 @@
 /cache/
 config.yaml
 /.puli
+propel.yml
+src/eLife/Medium/Model/Map/*
+src/eLife/Medium/Model/Base/*

@@ -65,6 +65,10 @@
             "install-path": "vendor/pimple/pimple",
             "installer": "composer"
         },
+        "propel/propel": {
+            "install-path": "vendor/propel/propel",
+            "installer": "composer"
+        },
         "psr/http-message": {
             "install-path": "vendor/psr/http-message",
             "installer": "composer"
@@ -101,6 +105,14 @@
             "install-path": "vendor/silex/silex",
             "installer": "composer"
         },
+        "symfony/config": {
+            "install-path": "vendor/symfony/config",
+            "installer": "composer"
+        },
+        "symfony/console": {
+            "install-path": "vendor/symfony/console",
+            "installer": "composer"
+        },
         "symfony/debug": {
             "install-path": "vendor/symfony/debug",
             "installer": "composer"
@@ -111,6 +123,10 @@
         },
         "symfony/filesystem": {
             "install-path": "vendor/symfony/filesystem",
+            "installer": "composer"
+        },
+        "symfony/finder": {
+            "install-path": "vendor/symfony/finder",
             "installer": "composer"
         },
         "symfony/http-foundation": {
@@ -135,6 +151,14 @@
         },
         "symfony/routing": {
             "install-path": "vendor/symfony/routing",
+            "installer": "composer"
+        },
+        "symfony/translation": {
+            "install-path": "vendor/symfony/translation",
+            "installer": "composer"
+        },
+        "symfony/validator": {
+            "install-path": "vendor/symfony/validator",
             "installer": "composer"
         },
         "symfony/yaml": {

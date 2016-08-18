@@ -23,7 +23,7 @@ use LogicException;
 
 class Kernel
 {
-    const ROOT = __DIR__ . '/../..';
+    const ROOT = __DIR__ . '/../../..';
     const CONFIG = self::ROOT . '/config.yaml';
 
     public static function create() : Application

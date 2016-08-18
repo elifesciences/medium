@@ -1,0 +1,25 @@
+<database name="default" defaultIdMethod="native"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd"
+          namespace="eLife\Medium\Model"
+        >
+    <table name="medium_articles" phpName="MediumArticle">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="guid" type="varchar" required="true"/>
+        <column name="title" type="varchar" required="true"/>
+        <column name="published" type="date" required="true"/>
+        <column name="impactStatement" type="varchar" required="true"/>
+        <column name="imageDomain" type="varchar" required="true"/>
+        <column name="imagePath" type="varchar" required="true"/>
+    </table>
+
+    <!--
+        When you're done with editing, open a terminal and run
+            `$ cd /Users/Stephen/Workspaces/elife/medium`
+            `$ vendor/bin/propel build`
+        to generate the model classes.
+
+        You should now be able to perform basic crud operations with your models. To learn how to use these models
+        please look into our documentation: http://propelorm.org/documentation/03-basic-crud.html
+    -->
+</database>

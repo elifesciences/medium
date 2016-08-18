@@ -6,14 +6,15 @@
     "require": {
         "silex/silex": "^2.0",
         "jms/serializer": "^1.2",
-        "symfony/yaml": "^3.1",
         "elife/api-validator": "dev-master",
         "symfony/psr-http-message-bridge": "^0.2.0",
-        "zendframework/zend-diactoros": "^1.3"
+        "zendframework/zend-diactoros": "^1.3",
+        "symfony/filesystem": "~2.2",
+        "propel/propel": "^2.0@alpha"
     },
     "autoload": {
         "psr-4": {
-            "eLife\\": "src/"
+            "eLife\\": "src/eLife"
         }
     },
     "minimum-stability": "dev",
