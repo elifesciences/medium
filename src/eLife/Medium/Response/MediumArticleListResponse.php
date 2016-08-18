@@ -2,9 +2,12 @@
 
 namespace eLife\Medium\Response;
 
+use Assert\Assertion;
+use eLife\Medium\Model\Image;
+use eLife\Medium\Model\MediumArticle;
 use JMS\Serializer\Annotation\Type;
 
-class MediumArticleListResponse implements HasHeaders
+final class MediumArticleListResponse implements HasHeaders
 {
 
     /**
@@ -14,6 +17,8 @@ class MediumArticleListResponse implements HasHeaders
 
     public function __construct(MediumArticleResponse ...$mediumArticles)
     {
+        Assertion::notEmpty($mediumArticles);
+
         $this->items = $mediumArticles;
     }
 
@@ -21,6 +26,24 @@ class MediumArticleListResponse implements HasHeaders
         return [
             'Content-Type' => ContentType::MEDIUM_ARTICLE
         ];
+    }
+
+    // This can be moved out to a separate mapper at some point,
+    // but for simplicity, I've made it a static constructor.
+    public static function mapFromEntities(array $articles) {
+        Assertion::allIsInstanceOf($articles, MediumArticle::class);
+
+        return new static(
+            ...array_map(function(MediumArticle $article) {
+                return new MediumArticleResponse(
+                    $article->getUri(),
+                    $article->getTitle(),
+                    $article->getImpactStatement(),
+                    new \DateTimeImmutable($article->getPublished()->format('c')),
+                    new ImageResponse($article->getImageAlt(), Image::basic($article->getImageDomain(), $article->getImagePath()))
+                );
+            }, $articles)
+        );
     }
 
 }

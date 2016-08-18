@@ -39,7 +39,7 @@ class MediumArticleResponse
     public function  __construct(
         string $uri,
         string $title,
-        string $impactStatement,
+        string $impactStatement = null,
         DateTimeImmutable $published,
         ImageResponse $image
     ) {

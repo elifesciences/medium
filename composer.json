@@ -19,7 +19,8 @@
     },
     "scripts": {
         "setup": "propel build && propel sql:build",
-        "database": "propel sql:insert"
+        "database": "propel sql:insert",
+        "sync": "propel build && propel sql:build --overwrite && propel sql:insert"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

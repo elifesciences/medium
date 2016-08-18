@@ -1,0 +1,5 @@
+database:
+  user: root
+validate: true
+mediumUrls:
+  - https://medium.com/@eLife

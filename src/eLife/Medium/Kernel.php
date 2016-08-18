@@ -5,6 +5,7 @@ namespace eLife\Medium;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
 use eLife\Medium\Model\Image;
+use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Response\ExceptionResponse;
 use eLife\Medium\Response\ImageResponse;
 use eLife\Medium\Response\MediumArticleListResponse;
@@ -24,7 +25,7 @@ use LogicException;
 class Kernel
 {
     const ROOT = __DIR__ . '/../../..';
-    const CONFIG = self::ROOT . '/config.yaml';
+    const CONFIG = self::ROOT . '/config.yml';
 
     public static function create() : Application
     {
@@ -104,16 +105,27 @@ class Kernel
     {
         // Routes.
         $app->get('/', function () use ($app) {
-            // Mock response.
-            $data = new MediumArticleListResponse(
-                new MediumArticleResponse(
-                    'https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18',
-                    'Hardened hearts reveal organ evolution',
-                    'Fossilized hearts have been found in specimens of an extinct fish in Brazil.',
-                    new DateTimeImmutable(),
-                    new ImageResponse('alt text', Image::basic('cdn-images-1.medium.com', '1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg'))
-                )
-            );
+
+            $article = new MediumArticle();
+            $article->setTitle('Hardened hearts reveal organ evolution');
+            $article->setUri('https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18');
+            $article->setImpactStatement('Fossilized hearts have been found in specimens of an extinct fish in Brazil.');
+            $article->setGuid('8eb882a8bf18');
+            $article->setPublished(new \DateTime());
+            $article->setImageDomain('cdn-images-1.medium.com');
+            $article->setImagePath('1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg');
+            $article->setImageAlt('alt text');
+
+            $article2 = new MediumArticle();
+            $article2->setTitle('How do bacteria know when to attack?');
+            $article2->setUri('https://medium.com/lifes-building-blocks/how-do-bacteria-know-when-to-attack-d8fe7a32514f');
+            $article2->setGuid('d8fe7a32514f');
+            $article2->setPublished(new \DateTime());
+            $article2->setImageDomain('cdn-images-1.medium.com');
+            $article2->setImagePath('1*2YPqnBTvdQSPhSmuhF3JOg.png');
+            $article2->setImageAlt('alt text');
+
+            $data = MediumArticleListResponse::mapFromEntities([ $article, $article2 ]);
 
             // Make the JSON.
             $json = $app['serializer']->serialize($data, 'json');
