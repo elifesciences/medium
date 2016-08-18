@@ -17,6 +17,10 @@
             "eLife\\": "src/eLife"
         }
     },
+    "scripts": {
+        "setup": "propel build && propel sql:build",
+        "database": "propel sql:insert"
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
