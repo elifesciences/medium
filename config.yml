@@ -1,5 +1,6 @@
 database:
   user: root
 validate: true
+debug: true
 mediumUrls:
   - https://medium.com/@eLife

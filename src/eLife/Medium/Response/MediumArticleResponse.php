@@ -39,9 +39,9 @@ class MediumArticleResponse
     public function  __construct(
         string $uri,
         string $title,
-        string $impactStatement = null,
         DateTimeImmutable $published,
-        ImageResponse $image
+        ImageResponse $image,
+        string $impactStatement = null
     ) {
         $this->uri = $uri;
         $this->title = $title;

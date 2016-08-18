@@ -29,6 +29,14 @@
             "install-path": "vendor/elife/api-validator",
             "installer": "composer"
         },
+        "guzzlehttp/guzzle": {
+            "install-path": "vendor/guzzlehttp/guzzle",
+            "installer": "composer"
+        },
+        "guzzlehttp/promises": {
+            "install-path": "vendor/guzzlehttp/promises",
+            "installer": "composer"
+        },
         "guzzlehttp/psr7": {
             "install-path": "vendor/guzzlehttp/psr7",
             "installer": "composer"
@@ -113,8 +121,16 @@
             "install-path": "vendor/symfony/console",
             "installer": "composer"
         },
+        "symfony/css-selector": {
+            "install-path": "vendor/symfony/css-selector",
+            "installer": "composer"
+        },
         "symfony/debug": {
             "install-path": "vendor/symfony/debug",
+            "installer": "composer"
+        },
+        "symfony/dom-crawler": {
+            "install-path": "vendor/symfony/dom-crawler",
             "installer": "composer"
         },
         "symfony/event-dispatcher": {

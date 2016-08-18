@@ -4,15 +4,13 @@ namespace eLife\Medium;
 
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
-use eLife\Medium\Model\Image;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Model\MediumArticleQuery;
 use eLife\Medium\Response\ExceptionResponse;
-use eLife\Medium\Response\ImageResponse;
 use eLife\Medium\Response\MediumArticleListResponse;
-use eLife\Medium\Response\MediumArticleResponse;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Propel\Runtime\Propel;
+use GuzzleHttp\Client;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Silex\Application;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
@@ -21,7 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
 use Webmozart\Json\JsonDecoder;
 use Throwable;
-use DateTimeImmutable;
 use LogicException;
 
 class Kernel
@@ -72,6 +69,14 @@ class Kernel
         return Yaml::parse(file_get_contents(self::CONFIG));
     }
 
+    public static function propelInit(Application $app)
+    {
+        if (!file_exists(self::PROPEL_CONFIG)) {
+            throw new LogicException("Propel configuration not found, please run `composer run sync` from the cli.");
+        }
+        require_once self::PROPEL_CONFIG;
+    }
+
     public static function dependencies(Application $app)
     {
         // Serializer.
@@ -91,19 +96,17 @@ class Kernel
         $app['psr7.bridge'] = function (Application $app) {
             return new DiactorosFactory();
         };
-
+        // Validator.
         $app['puli.validator'] = function (Application $app) {
             return new JsonMessageValidator(
                 new PuliSchemaFinder($app['puli.repository']),
                 new JsonDecoder()
             );
         };
-    }
-
-    public static function validate(Application $app, Request $request, Response $response) {
-        $app['puli.validator']->validate(
-            $app['psr7.bridge']->createResponse($response)
-        );
+        // Medium Guzzle client.
+        $app['medium.client'] = function () : Client {
+            return new Client(['base_uri' => 'https://medium.com/feed/']);
+        };
     }
 
     public static function routes(Application $app)
@@ -112,29 +115,66 @@ class Kernel
         $app->get('/', function () use ($app) {
 
             $articles = MediumArticleQuery::create()
-                ->orderByPublished()
+                ->orderByPublished(Criteria::DESC)
                 ->limit(10)
                 ->find();
 
-            $data = MediumArticleListResponse::mapFromEntities($articles);
-
+            // Map array of articles from database to response.
+            $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
             // Make the JSON.
             $json = $app['serializer']->serialize($data, 'json');
-
-            // Get repo
-            // Make query based on params (none)
-            // return response object
-            // serialize
+            // Return response.
             return new Response($json, 200, $data->getHeaders());
         });
+
+        $app->get('/import/{mediumUsername}', function ($mediumUsername) use ($app) {
+            $data = $app['medium.client']->get('@' . $mediumUsername);
+            $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
+
+            foreach ($articles as $k => $article) {
+                // @todo add `$article` check in the database to replace exception.
+                try {
+                    $article->save();
+                } catch (\Exception $e) {
+                    unset($articles[$k]);
+                }
+            }
+
+            // Return the fresh data..
+            $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+            $json = $app['serializer']->serialize($data, 'json');
+            return new Response($json, 200, $data->getHeaders());
+        });
+
+        if ($app['config']['debug']) {
+            // this is only meant to provide.
+            $app->get('/random-fixture/{num}', function ($num) use ($app) {
+                $articles = [];
+                for ($i = 0; $i < $num; $i++) {
+                    $article = new MediumArticle();
+                    $article->setTitle('Hardened hearts reveal organ evolution' . md5(random_bytes(20)));
+                    $article->setUri('https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18#' . md5(random_bytes(20)));
+                    $article->setImpactStatement('Fossilized hearts have been found in specimens of an extinct fish in Brazil.' . md5(random_bytes(20)));
+                    $article->setGuid('8eb882a8bf18' . md5(random_bytes(20)));
+                    $article->setPublished(new \DateTime());
+                    $article->setImageDomain('cdn-images-1.medium.com');
+                    $article->setImagePath('1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg');
+                    $article->setImageAlt('alt text');
+                    $article->save();
+                    $articles[] = $article;
+                }
+                $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+                $json = $app['serializer']->serialize($data, 'json');
+                return new Response($json, 200, $data->getHeaders());
+            });
+        }
     }
 
-    public static function propelInit(Application $app)
+    public static function validate(Application $app, Request $request, Response $response)
     {
-        if (!file_exists(self::PROPEL_CONFIG)) {
-            throw new LogicException("Propel configuration not found, please run `composer run sync` from the cli.");
-        }
-        require_once self::PROPEL_CONFIG;
+        $app['puli.validator']->validate(
+            $app['psr7.bridge']->createResponse($response)
+        );
     }
 
     public static function handleException(Throwable $e, Application $app)
