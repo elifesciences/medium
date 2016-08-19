@@ -130,18 +130,16 @@ class Kernel
         $app->get('/import/{mediumUsername}', function ($mediumUsername) use ($app) {
             $data = $app['medium.client']->get('@' . $mediumUsername);
             $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
-
+            $responseArticles = [];
             foreach ($articles as $k => $article) {
-                // @todo add `$article` check in the database to replace exception.
-                try {
+                $databaseArticle = (new MediumArticleQuery())->findOneByGuid($article->getGuid());
+                if (null === $databaseArticle) {
                     $article->save();
-                } catch (\Exception $e) {
-                    unset($articles[$k]);
+                    $responseArticles[] = $article;
                 }
             }
-
             // Return the fresh data..
-            $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+            $data = MediumArticleMapper::mapResponseFromDatabaseResult($responseArticles);
             $json = $app['serializer']->serialize($data, 'json');
             return new Response($json, 200, $data->getHeaders());
         });
