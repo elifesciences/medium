@@ -6,11 +6,19 @@ use LogicException;
 
 class Image
 {
-    public $scaled;
+    private $scaled;
     private $domain;
     private $path;
     private $width;
     private $height;
+
+    public function getDomain() {
+        return $this->domain;
+    }
+
+    public function getPath() {
+        return $this->path;
+    }
 
     private function __construct(string $domain, string $path, bool $scaled = null, int $width = null, int $height = null)
     {
@@ -71,6 +79,29 @@ class Image
             false,
             $width,
             $height
+        );
+    }
+
+    public static function fromUrl($image) {
+        $pieces = explode('/', $image);
+        // https: / http:
+        array_shift($pieces);
+        // Empty space.
+        array_shift($pieces);
+        // Domain
+        $domain = array_shift($pieces);
+        // Type
+        $type = array_shift($pieces);
+        if ($type !== 'max') {
+            // height
+            array_shift($pieces);
+        }
+        // width
+        array_shift($pieces);
+        // Final result.
+        return new static(
+            $domain,
+            implode('/', $pieces)
         );
     }
 

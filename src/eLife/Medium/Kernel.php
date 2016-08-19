@@ -121,9 +121,7 @@ class Kernel
 
             // Map array of articles from database to response.
             $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
-            // Make the JSON.
             $json = $app['serializer']->serialize($data, 'json');
-            // Return response.
             return new Response($json, 200, $data->getHeaders());
         });
 
