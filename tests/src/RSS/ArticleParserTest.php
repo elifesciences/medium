@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\eLife\Medium;
+namespace tests\eLife\Medium\RSS;
 
 use eLife\Medium\Model\Image;
 use eLife\Medium\RSS\ArticleParser;
@@ -48,7 +48,8 @@ final class ArticleParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('', $text);
     }
 
-    public function testParseImage() {
+    public function testParseImage()
+    {
         $parser = new ArticleParser(self::$fixture);
 
         $image = $parser->parseImage('<img src="https://d262ilb51hltx0.cloudfront.net/max/960/1*r8Dosc01-Cyo82eZo-oRMA.png" />');

@@ -1,0 +1,81 @@
+<?php
+
+namespace tests\eLife\Medium;
+
+use eLife\Medium\Kernel;
+use eLife\Medium\Model\Base\MediumArticleQuery;
+use eLife\Medium\Model\MediumArticle;
+use Mockery\Mock;
+use Silex\WebTestCase;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use function GuzzleHttp\json_decode;
+
+class KernelTest extends WebTestCase
+{
+    public function createApplication() : HttpKernelInterface
+    {
+        return Kernel::create(['validate' => true]);
+    }
+
+    /**
+     * @test
+     */
+    public function testGetWithData()
+    {
+        $fixtures = [
+            self::articleFixture(),
+            self::articleFixture(),
+            self::articleFixture(),
+            self::articleFixture(),
+        ];
+
+        $this->app['propel.query.medium'] = new Mock(MediumArticleQuery::class);
+        $this->app['propel.query.medium']->shouldReceive('orderByPublished')->andReturn($this->app['propel.query.medium']);
+        $this->app['propel.query.medium']->shouldReceive('limit')->andReturn($this->app['propel.query.medium']);
+        $this->app['propel.query.medium']->shouldReceive('find')->andReturn($fixtures);
+
+        $client = $this->createClient();
+        $client->request('GET', '/');
+
+        $json = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertNotEmpty($json['items']);
+
+        $this->assertTrue($client->getResponse()->isOk()); // validation configuration ensures validity.
+    }
+
+    /**
+     * @test
+     */
+    public function testGetWithEmptyDataSet()
+    {
+        $this->app['propel.query.medium'] = new Mock(MediumArticleQuery::class);
+        $this->app['propel.query.medium']->shouldReceive('orderByPublished')->andReturn($this->app['propel.query.medium']);
+        $this->app['propel.query.medium']->shouldReceive('limit')->andReturn($this->app['propel.query.medium']);
+        $this->app['propel.query.medium']->shouldReceive('find')->andReturn([]);
+
+        $client = $this->createClient();
+        $client->request('GET', '/');
+
+        $json = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertEmpty($json['items']);
+
+        $this->assertTrue($client->getResponse()->isOk()); // validation configuration ensures validity.
+    }
+
+    public static function articleFixture() : MediumArticle
+    {
+        $article = new MediumArticle();
+        $article->setTitle('Hardened hearts reveal organ evolution'.md5(random_bytes(20)));
+        $article->setUri('https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18#'.md5(random_bytes(20)));
+        $article->setImpactStatement('Fossilized hearts have been found in specimens of an extinct fish in Brazil.'.md5(random_bytes(20)));
+        $article->setGuid('8eb882a8bf18'.md5(random_bytes(20)));
+        $article->setPublished(new \DateTime());
+        $article->setImageDomain('cdn-images-1.medium.com');
+        $article->setImagePath('1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg');
+        $article->setImageAlt('alt text');
+
+        return $article;
+    }
+}

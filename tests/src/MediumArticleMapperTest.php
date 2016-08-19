@@ -3,7 +3,6 @@
 namespace tests\eLife\Medium;
 
 use eLife\Medium\MediumArticleMapper;
-use eLife\Medium\Model\Image;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Response\ImageResponse;
 use eLife\Medium\Response\MediumArticleListResponse;

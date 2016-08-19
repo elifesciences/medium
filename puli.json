@@ -41,6 +41,11 @@
             "install-path": "vendor/guzzlehttp/psr7",
             "installer": "composer"
         },
+        "hamcrest/hamcrest-php": {
+            "install-path": "vendor/hamcrest/hamcrest-php",
+            "installer": "composer",
+            "env": "dev"
+        },
         "jms/metadata": {
             "install-path": "vendor/jms/metadata",
             "installer": "composer"
@@ -56,6 +61,11 @@
         "justinrainbow/json-schema": {
             "install-path": "vendor/justinrainbow/json-schema",
             "installer": "composer"
+        },
+        "mockery/mockery": {
+            "install-path": "vendor/mockery/mockery",
+            "installer": "composer",
+            "env": "dev"
         },
         "myclabs/deep-copy": {
             "install-path": "vendor/myclabs/deep-copy",
@@ -200,6 +210,11 @@
         "silex/silex": {
             "install-path": "vendor/silex/silex",
             "installer": "composer"
+        },
+        "symfony/browser-kit": {
+            "install-path": "vendor/symfony/browser-kit",
+            "installer": "composer",
+            "env": "dev"
         },
         "symfony/config": {
             "install-path": "vendor/symfony/config",

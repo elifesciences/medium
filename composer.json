@@ -30,5 +30,9 @@
         "sync": "propel build && propel sql:build --overwrite && propel sql:insert && propel config:convert"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "symfony/browser-kit": "^3.1",
+        "mockery/mockery": "^0.9.5"
+    }
 }

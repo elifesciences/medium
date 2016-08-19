@@ -26,12 +26,12 @@ final class Kernel
     const CONFIG = self::ROOT.'/config.yml';
     const PROPEL_CONFIG = self::ROOT.'/cache/propel/conf/config.php';
 
-    public static function create() : Application
+    public static function create($config = []) : Application
     {
         // Create application.
         $app = new Application();
         // Load config
-        $app['config'] = self::loadConfig();
+        $app['config'] = array_merge($config, self::loadConfig());
         // Annotations.
         AnnotationRegistry::registerAutoloadNamespace(
             'JMS\Serializer\Annotation', self::ROOT.'/vendor/jms/serializer/src'
@@ -110,6 +110,10 @@ final class Kernel
         $app['medium.client'] = function () : Client {
             return new Client(['base_uri' => 'https://medium.com/feed/']);
         };
+
+        $app['propel.query.medium'] = function () : MediumArticleQuery {
+            return new MediumArticleQuery();
+        };
     }
 
     public static function routes(Application $app)
@@ -117,7 +121,7 @@ final class Kernel
         // Routes.
         $app->get('/', function () use ($app) {
 
-            $articles = MediumArticleQuery::create()
+            $articles = $app['propel.query.medium']
                 ->orderByPublished(Criteria::DESC)
                 ->limit(10)
                 ->find();
