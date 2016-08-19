@@ -2,12 +2,10 @@
 
 namespace eLife\Medium\Response;
 
-
 use JMS\Serializer\Annotation\Type;
 
-class ImageListResponse
+final class ImageListResponse
 {
-
     public $alt;
 
     /**

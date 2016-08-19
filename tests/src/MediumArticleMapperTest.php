@@ -1,0 +1,101 @@
+<?php
+
+namespace tests\eLife\Medium;
+
+use eLife\Medium\MediumArticleMapper;
+use eLife\Medium\Model\Image;
+use eLife\Medium\Model\MediumArticle;
+use eLife\Medium\Response\ImageResponse;
+use eLife\Medium\Response\MediumArticleListResponse;
+use eLife\Medium\Response\MediumArticleResponse;
+use PHPUnit_Framework_TestCase;
+
+final class MediumArticleMapperTest extends PHPUnit_Framework_TestCase
+{
+    /**
+     * @test
+     */
+    public function testMapResponseFromDatabaseResult()
+    {
+        $articles = [
+            self::articleFixture(),
+            self::articleFixture(),
+            self::articleFixture(),
+        ];
+        $articleResponse = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+
+        $this->assertInstanceOf(MediumArticleListResponse::class, $articleResponse);
+        $this->assertNotEmpty($articleResponse->getHeaders());
+        $this->assertNotNull($articleResponse->getHeaders()['Content-Type']);
+
+        $this->assertNotEmpty($articleResponse->items);
+        $this->assertContainsOnlyInstancesOf(MediumArticleResponse::class, $articleResponse->items);
+    }
+
+    public static function articleFixture()
+    {
+        $article = new MediumArticle();
+        $article->setTitle('Hardened hearts reveal organ evolution'.md5(random_bytes(20)));
+        $article->setUri('https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18#'.md5(random_bytes(20)));
+        $article->setImpactStatement('Fossilized hearts have been found in specimens of an extinct fish in Brazil.'.md5(random_bytes(20)));
+        $article->setGuid('8eb882a8bf18'.md5(random_bytes(20)));
+        $article->setPublished(new \DateTime());
+        $article->setImageDomain('cdn-images-1.medium.com');
+        $article->setImagePath('1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg');
+        $article->setImageAlt('alt text');
+
+        return $article;
+    }
+
+    /**
+     * @test
+     */
+    public function testMapResponseFromMediumArticle()
+    {
+        $article = new MediumArticle();
+        $article->setTitle('Hardened hearts reveal organ evolution');
+        $article->setUri('https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18#');
+        $article->setImpactStatement('Fossilized hearts have been found in specimens of an extinct fish in Brazil.');
+        $article->setGuid('8eb882a8bf18');
+        $article->setPublished(new \DateTime());
+        $article->setImageDomain('cdn-images-1.medium.com');
+        $article->setImagePath('1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg');
+        $article->setImageAlt('alt text');
+
+        $articleResponse = MediumArticleMapper::mapResponseFromMediumArticle($article);
+
+        $this->assertSame($article->getTitle(), $articleResponse->title);
+        $this->assertSame($article->getUri(), $articleResponse->uri);
+        $this->assertSame($article->getImpactStatement(), $articleResponse->impactStatement);
+        $this->assertSame($article->getPublished('c'), $articleResponse->published->format('c'));
+        $this->assertInstanceOf(ImageResponse::class, $articleResponse->image);
+    }
+
+    /**
+     * This test will be to detect BC if the mapping is changed. It will still pass if Medium changes their RSS.
+     *
+     * @test
+     */
+    public function testXmlToMediumArticleList()
+    {
+        $xml = file_get_contents(__DIR__.'/mediumFixture.xml');
+
+        $articles = MediumArticleMapper::xmlToMediumArticleList($xml);
+        $this->assertNotEmpty($articles);
+        $this->assertContainsOnlyInstancesOf(MediumArticle::class, $articles);
+
+        $article = array_shift($articles);
+
+        if ($article instanceof MediumArticle) {
+            $this->assertSame('"Fishing out the origin of joint lubrication for arthritis research" in Life on Earth', $article->getTitle());
+            $this->assertSame('https://medium.com/life-on-earth/fishing-out-the-origin-of-joint-lubrication-for-arthritis-research-6f75eb2c75a0', $article->getUri());
+            $this->assertSame('Lubricated joints evolved millions of years earlier than previously thought.', $article->getImpactStatement());
+            $this->assertSame('2016-08-19T11:11:01+00:00', $article->getPublished('c'));
+            $this->assertSame('d262ilb51hltx0.cloudfront.net', $article->getImageDomain());
+            $this->assertSame('1*r8Dosc01-Cyo82eZo-oRMA.png', $article->getImagePath());
+            $this->assertSame($article->getTitle(), $article->getImageAlt());
+        } else {
+            $this->fail('Article must be instance of MediumArticles');
+        }
+    }
+}

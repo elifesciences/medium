@@ -2,12 +2,10 @@
 
 namespace eLife\Medium\Response;
 
-use Assert\Assertion;
 use JMS\Serializer\Annotation\Type;
 
 final class MediumArticleListResponse implements HasHeaders
 {
-
     /**
      * @Type("array<eLife\Medium\Response\MediumArticleResponse>")
      */
@@ -18,10 +16,10 @@ final class MediumArticleListResponse implements HasHeaders
         $this->items = $mediumArticles;
     }
 
-    public function getHeaders() : array {
+    public function getHeaders() : array
+    {
         return [
-            'Content-Type' => ContentType::MEDIUM_ARTICLE
+            'Content-Type' => ContentType::MEDIUM_ARTICLE,
         ];
     }
-
 }

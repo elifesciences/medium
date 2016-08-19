@@ -12,12 +12,16 @@
         "symfony/filesystem": "~2.2",
         "propel/propel": "^2.0@alpha",
         "guzzlehttp/guzzle": "^6.2",
-        "symfony/dom-crawler": "^3.1",
-        "symfony/css-selector": "^3.1"
+        "phpunit/phpunit": "^5.5"
     },
     "autoload": {
         "psr-4": {
             "eLife\\": "src/eLife"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\eLife\\Medium\\": "./tests/src"
         }
     },
     "scripts": {

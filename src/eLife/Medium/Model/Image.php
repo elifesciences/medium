@@ -4,7 +4,7 @@ namespace eLife\Medium\Model;
 
 use LogicException;
 
-class Image
+final class Image
 {
     private $scaled;
     private $domain;
@@ -12,11 +12,13 @@ class Image
     private $width;
     private $height;
 
-    public function getDomain() {
+    public function getDomain()
+    {
         return $this->domain;
     }
 
-    public function getPath() {
+    public function getPath()
+    {
         return $this->path;
     }
 
@@ -73,6 +75,7 @@ class Image
         if (null === $height) {
             $height = $width;
         }
+
         return new static(
             $this->domain,
             $this->path,
@@ -82,7 +85,8 @@ class Image
         );
     }
 
-    public static function fromUrl($image) {
+    public static function fromUrl($image)
+    {
         $pieces = explode('/', $image);
         // https: / http:
         array_shift($pieces);
@@ -92,7 +96,9 @@ class Image
         $domain = array_shift($pieces);
         // Type
         $type = array_shift($pieces);
-        if ($type !== 'max') {
+        if ($type === 'fit') {
+            // extra type (c)
+            array_shift($pieces);
             // height
             array_shift($pieces);
         }
@@ -114,9 +120,9 @@ class Image
             ');
         }
         if ($this->scaled) {
-            return 'https://' . $this->domain . '/max/' . $this->width . '/' . $this->path;
+            return 'https://'.$this->domain.'/max/'.$this->width.'/'.$this->path;
         }
-        return 'https://' . $this->domain . '/fit/c/' . $this->width . '/' . $this->height . '/' . $this->path;
-    }
 
+        return 'https://'.$this->domain.'/fit/c/'.$this->width.'/'.$this->height.'/'.$this->path;
+    }
 }

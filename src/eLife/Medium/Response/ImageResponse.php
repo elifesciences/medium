@@ -2,13 +2,11 @@
 
 namespace eLife\Medium\Response;
 
-
 use elife\Medium\Model\Image;
 use JMS\Serializer\Annotation\Type;
 
-class ImageResponse
+final class ImageResponse
 {
-
     /**
      * @Type("string")
      */
@@ -34,7 +32,7 @@ class ImageResponse
             '1:1' => [
                 70 => $image->crop(70),
                 140 => $image->crop(140),
-            ]
+            ],
         ];
     }
 }

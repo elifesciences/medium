@@ -2,7 +2,6 @@
 
 namespace eLife\Medium;
 
-use Assert\Assertion;
 use eLife\Medium\Model\Image;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Response\ImageResponse;
@@ -27,6 +26,7 @@ final class MediumArticleMapper
         foreach ($items as $k => $i) {
             $r[$k] = $fn($i);
         }
+
         return $r;
     }
 
@@ -54,8 +54,8 @@ final class MediumArticleMapper
             foreach ($item as $node_type => $node) {
                 switch ($node_type) {
                     case 'title':
-                        $article->setTitle((string)$node);
-                        $article->setImageAlt((string)$node);
+                        $article->setTitle((string) $node);
+                        $article->setImageAlt((string) $node);
                         break;
                     case 'description':
                         $image = $root->parseImage($node);
@@ -66,19 +66,20 @@ final class MediumArticleMapper
                         $article->setImpactStatement($root->parseParagraph($node));
                         break;
                     case 'link':
-                        $link = explode('?source=rss', (string)$node);
+                        $link = explode('?source=rss', (string) $node);
                         $article->setUri(array_shift($link));
                         break;
                     case 'guid':
-                        $article->setGuid((string)$node);
+                        $article->setGuid((string) $node);
                         break;
                     case 'pubDate':
-                        $article->setPublished(new \DateTime((string)$node));
+                        $article->setPublished(new \DateTime((string) $node));
                         break;
                 }
             }
             $articles[] = $article;
         }
+
         return $articles;
     }
 }

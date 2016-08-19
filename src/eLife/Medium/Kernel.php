@@ -2,30 +2,29 @@
 
 namespace eLife\Medium;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Model\MediumArticleQuery;
 use eLife\Medium\Response\ExceptionResponse;
-use eLife\Medium\Response\MediumArticleListResponse;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use GuzzleHttp\Client;
+use JMS\Serializer\SerializerBuilder;
+use LogicException;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Silex\Application;
-use JMS\Serializer\SerializerBuilder;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
-use Webmozart\Json\JsonDecoder;
 use Throwable;
-use LogicException;
+use Webmozart\Json\JsonDecoder;
 
-class Kernel
+final class Kernel
 {
-    const ROOT = __DIR__ . '/../../..';
-    const CONFIG = self::ROOT . '/config.yml';
-    const PROPEL_CONFIG = self::ROOT . '/cache/propel/conf/config.php';
+    const ROOT = __DIR__.'/../../..';
+    const CONFIG = self::ROOT.'/config.yml';
+    const PROPEL_CONFIG = self::ROOT.'/cache/propel/conf/config.php';
 
     public static function create() : Application
     {
@@ -35,7 +34,7 @@ class Kernel
         $app['config'] = self::loadConfig();
         // Annotations.
         AnnotationRegistry::registerAutoloadNamespace(
-            'JMS\Serializer\Annotation', self::ROOT . '/vendor/jms/serializer/src'
+            'JMS\Serializer\Annotation', self::ROOT.'/vendor/jms/serializer/src'
         );
         // Propel.
         self::propelInit($app);
@@ -56,8 +55,10 @@ class Kernel
             if ($app['debug']) {
                 return null;
             }
+
             return self::handleException($e, $app);
         });
+
         return $app;
     }
 
@@ -66,13 +67,14 @@ class Kernel
         if (!file_exists(self::CONFIG)) {
             throw new LogicException('Configuration file not found');
         }
+
         return Yaml::parse(file_get_contents(self::CONFIG));
     }
 
     public static function propelInit(Application $app)
     {
         if (!file_exists(self::PROPEL_CONFIG)) {
-            throw new LogicException("Propel configuration not found, please run `composer run sync` from the cli.");
+            throw new LogicException('Propel configuration not found, please run `composer run sync` from the cli.');
         }
         require_once self::PROPEL_CONFIG;
     }
@@ -81,11 +83,12 @@ class Kernel
     {
         // Serializer.
         $app['serializer'] = function () {
-            return SerializerBuilder::create()->setCacheDir(self::ROOT . '/cache')->build();
+            return SerializerBuilder::create()->setCacheDir(self::ROOT.'/cache')->build();
         };
         // Puli.
         $app['puli.factory'] = function () {
             $factoryClass = PULI_FACTORY_CLASS;
+
             return new $factoryClass();
         };
         // Puli repo.
@@ -122,11 +125,12 @@ class Kernel
             // Map array of articles from database to response.
             $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
             $json = $app['serializer']->serialize($data, 'json');
+
             return new Response($json, 200, $data->getHeaders());
         });
 
         $app->get('/import/{mediumUsername}', function ($mediumUsername) use ($app) {
-            $data = $app['medium.client']->get('@' . $mediumUsername);
+            $data = $app['medium.client']->get('@'.$mediumUsername);
             $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
             $responseArticles = [];
             foreach ($articles as $k => $article) {
@@ -139,6 +143,7 @@ class Kernel
             // Return the fresh data..
             $data = MediumArticleMapper::mapResponseFromDatabaseResult($responseArticles);
             $json = $app['serializer']->serialize($data, 'json');
+
             return new Response($json, 200, $data->getHeaders());
         });
 
@@ -146,12 +151,12 @@ class Kernel
             // this is only meant to provide.
             $app->get('/random-fixture/{num}', function ($num) use ($app) {
                 $articles = [];
-                for ($i = 0; $i < $num; $i++) {
+                for ($i = 0; $i < $num; ++$i) {
                     $article = new MediumArticle();
-                    $article->setTitle('Hardened hearts reveal organ evolution' . md5(random_bytes(20)));
-                    $article->setUri('https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18#' . md5(random_bytes(20)));
-                    $article->setImpactStatement('Fossilized hearts have been found in specimens of an extinct fish in Brazil.' . md5(random_bytes(20)));
-                    $article->setGuid('8eb882a8bf18' . md5(random_bytes(20)));
+                    $article->setTitle('Hardened hearts reveal organ evolution'.md5(random_bytes(20)));
+                    $article->setUri('https://medium.com/life-on-earth/hardened-hearts-reveal-organ-evolution-8eb882a8bf18#'.md5(random_bytes(20)));
+                    $article->setImpactStatement('Fossilized hearts have been found in specimens of an extinct fish in Brazil.'.md5(random_bytes(20)));
+                    $article->setGuid('8eb882a8bf18'.md5(random_bytes(20)));
                     $article->setPublished(new \DateTime());
                     $article->setImageDomain('cdn-images-1.medium.com');
                     $article->setImagePath('1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg');
@@ -161,6 +166,7 @@ class Kernel
                 }
                 $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
                 $json = $app['serializer']->serialize($data, 'json');
+
                 return new Response($json, 200, $data->getHeaders());
             });
         }
@@ -184,5 +190,4 @@ class Kernel
             ['Content-Type' => 'application/json']
         );
     }
-
 }

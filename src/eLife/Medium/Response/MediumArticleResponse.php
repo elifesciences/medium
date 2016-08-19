@@ -2,15 +2,12 @@
 
 namespace eLife\Medium\Response;
 
-
-use JMS\Serializer\Annotation\Type;
-
 use DateTime;
 use DateTimeImmutable;
+use JMS\Serializer\Annotation\Type;
 
-class MediumArticleResponse
+final class MediumArticleResponse
 {
-
     /**
      * @Type("string")
      */
@@ -36,7 +33,7 @@ class MediumArticleResponse
      */
     public $image;
 
-    public function  __construct(
+    public function __construct(
         string $uri,
         string $title,
         DateTimeImmutable $published,
@@ -49,5 +46,4 @@ class MediumArticleResponse
         $this->impactStatement = $impactStatement;
         $this->image = $image;
     }
-
 }

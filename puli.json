@@ -57,6 +57,10 @@
             "install-path": "vendor/justinrainbow/json-schema",
             "installer": "composer"
         },
+        "myclabs/deep-copy": {
+            "install-path": "vendor/myclabs/deep-copy",
+            "installer": "composer"
+        },
         "paragonie/random_compat": {
             "install-path": "vendor/paragonie/random_compat",
             "installer": "composer"
@@ -65,8 +69,52 @@
             "install-path": "vendor/phpcollection/phpcollection",
             "installer": "composer"
         },
+        "phpdocumentor/reflection-common": {
+            "install-path": "vendor/phpdocumentor/reflection-common",
+            "installer": "composer"
+        },
+        "phpdocumentor/reflection-docblock": {
+            "install-path": "vendor/phpdocumentor/reflection-docblock",
+            "installer": "composer"
+        },
+        "phpdocumentor/type-resolver": {
+            "install-path": "vendor/phpdocumentor/type-resolver",
+            "installer": "composer"
+        },
         "phpoption/phpoption": {
             "install-path": "vendor/phpoption/phpoption",
+            "installer": "composer"
+        },
+        "phpspec/prophecy": {
+            "install-path": "vendor/phpspec/prophecy",
+            "installer": "composer"
+        },
+        "phpunit/php-code-coverage": {
+            "install-path": "vendor/phpunit/php-code-coverage",
+            "installer": "composer"
+        },
+        "phpunit/php-file-iterator": {
+            "install-path": "vendor/phpunit/php-file-iterator",
+            "installer": "composer"
+        },
+        "phpunit/php-text-template": {
+            "install-path": "vendor/phpunit/php-text-template",
+            "installer": "composer"
+        },
+        "phpunit/php-timer": {
+            "install-path": "vendor/phpunit/php-timer",
+            "installer": "composer"
+        },
+        "phpunit/php-token-stream": {
+            "install-path": "vendor/phpunit/php-token-stream",
+            "installer": "composer"
+        },
+        "phpunit/phpunit": {
+            "install-path": "vendor/phpunit/phpunit",
+            "installer": "composer"
+        },
+        "phpunit/phpunit-mock-objects": {
+            "install-path": "vendor/phpunit/phpunit-mock-objects",
             "installer": "composer"
         },
         "pimple/pimple": {
@@ -105,6 +153,46 @@
             "install-path": "vendor/ramsey/uuid",
             "installer": "composer"
         },
+        "sebastian/code-unit-reverse-lookup": {
+            "install-path": "vendor/sebastian/code-unit-reverse-lookup",
+            "installer": "composer"
+        },
+        "sebastian/comparator": {
+            "install-path": "vendor/sebastian/comparator",
+            "installer": "composer"
+        },
+        "sebastian/diff": {
+            "install-path": "vendor/sebastian/diff",
+            "installer": "composer"
+        },
+        "sebastian/environment": {
+            "install-path": "vendor/sebastian/environment",
+            "installer": "composer"
+        },
+        "sebastian/exporter": {
+            "install-path": "vendor/sebastian/exporter",
+            "installer": "composer"
+        },
+        "sebastian/global-state": {
+            "install-path": "vendor/sebastian/global-state",
+            "installer": "composer"
+        },
+        "sebastian/object-enumerator": {
+            "install-path": "vendor/sebastian/object-enumerator",
+            "installer": "composer"
+        },
+        "sebastian/recursion-context": {
+            "install-path": "vendor/sebastian/recursion-context",
+            "installer": "composer"
+        },
+        "sebastian/resource-operations": {
+            "install-path": "vendor/sebastian/resource-operations",
+            "installer": "composer"
+        },
+        "sebastian/version": {
+            "install-path": "vendor/sebastian/version",
+            "installer": "composer"
+        },
         "seld/jsonlint": {
             "install-path": "vendor/seld/jsonlint",
             "installer": "composer"
@@ -123,7 +211,8 @@
         },
         "symfony/css-selector": {
             "install-path": "vendor/symfony/css-selector",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "symfony/debug": {
             "install-path": "vendor/symfony/debug",
@@ -131,7 +220,8 @@
         },
         "symfony/dom-crawler": {
             "install-path": "vendor/symfony/dom-crawler",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "symfony/event-dispatcher": {
             "install-path": "vendor/symfony/event-dispatcher",

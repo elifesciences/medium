@@ -7,7 +7,6 @@ use SimpleXMLIterator;
 
 final class ArticleParser
 {
-
     public function __construct($xmlBody)
     {
         $this->body = $xmlBody;
@@ -29,7 +28,11 @@ final class ArticleParser
     {
         // @todo more robust solution.
         $pieces = explode('class="medium-feed-snippet">', $html);
-        $para = explode('</p>', $pieces[1]);
+        if (!isset($pieces[1])) {
+            return '';
+        }
+        $para = explode('</', $pieces[1]);
+
         return $para[0];
     }
 
@@ -41,7 +44,7 @@ final class ArticleParser
         if (isset($matches[1])) {
             return Image::fromUrl($matches[1]);
         }
+
         return null;
     }
-
 }
