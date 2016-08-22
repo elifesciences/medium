@@ -12,12 +12,12 @@ final class Image
     private $width;
     private $height;
 
-    public function getDomain()
+    public function getDomain() : string
     {
         return $this->domain;
     }
 
-    public function getPath()
+    public function getPath() : string
     {
         return $this->path;
     }
@@ -31,7 +31,7 @@ final class Image
         $this->height = $height;
     }
 
-    public static function basic($domain, $path)
+    public static function basic(string $domain, string $path) : self
     {
         return new static (
             $domain,
@@ -39,7 +39,7 @@ final class Image
         );
     }
 
-    public static function scaled($domain, $path, $width) : self
+    public static function scaled(string $domain, string $path, int $width) : self
     {
         return new static(
             $domain,
@@ -49,7 +49,7 @@ final class Image
         );
     }
 
-    public static function cropped($domain, $path, $height, $width) : self
+    public static function cropped(string $domain, string $path, int $height, int $width) : self
     {
         return new static(
             $domain,
@@ -60,7 +60,7 @@ final class Image
         );
     }
 
-    public function scale($width) : self
+    public function scale(int $width) : self
     {
         return new static(
             $this->domain,
@@ -70,7 +70,7 @@ final class Image
         );
     }
 
-    public function crop($width, $height = null) : self
+    public function crop(int $width, int $height = null) : self
     {
         if (null === $height) {
             $height = $width;
@@ -85,7 +85,7 @@ final class Image
         );
     }
 
-    public static function fromUrl($image)
+    public static function fromUrl(string $image) : self
     {
         $pieces = explode('/', $image);
         // https: / http:
@@ -111,7 +111,7 @@ final class Image
         );
     }
 
-    public function __toString()
+    public function __toString() : string
     {
         if (null === $this->scaled) {
             throw new LogicException('

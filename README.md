@@ -91,6 +91,8 @@ Configure image variants in config, save images to when scraping API. Configurat
 
 These examples will be available at endpoints along the lines of:
 
+**Update: As of 22/09 we are using the cloudfront endpoints directly from medium** 
+
  - `/api/medium/images/{id}/thumbnail.jpeg`
  - `/api/medium/images/{id}/splash.jpeg`
 

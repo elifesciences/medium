@@ -12,7 +12,8 @@
         "symfony/filesystem": "~2.2",
         "propel/propel": "^2.0@alpha",
         "guzzlehttp/guzzle": "^6.2",
-        "phpunit/phpunit": "^5.5"
+        "phpunit/phpunit": "^5.5",
+        "elife/api-sdk": "^1.0@dev"
     },
     "autoload": {
         "psr-4": {
@@ -27,7 +28,8 @@
     "scripts": {
         "setup": "propel build && propel sql:build && propel config:convert",
         "database": "propel sql:insert",
-        "sync": "propel build && propel sql:build --overwrite && propel sql:insert && propel config:convert"
+        "sync": "propel build && propel sql:build --overwrite && propel sql:insert && propel config:convert",
+        "cache:clear" : "rm -rf ./cache/metadata && rm -rf ./cache/annotations"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

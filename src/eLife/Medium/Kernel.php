@@ -3,15 +3,19 @@
 namespace eLife\Medium;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use eLife\ApiSdk\ApiClient\MediumClient;
+use eLife\ApiSdk\MediaType;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Model\MediumArticleQuery;
 use eLife\Medium\Response\ExceptionResponse;
+use eLife\Medium\Response\VersionResolver;
 use GuzzleHttp\Client;
 use JMS\Serializer\SerializerBuilder;
 use LogicException;
 use Propel\Runtime\ActiveQuery\Criteria;
+use SebastianBergmann\Version;
 use Silex\Application;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +41,7 @@ final class Kernel
             'JMS\Serializer\Annotation', self::ROOT.'/vendor/jms/serializer/src'
         );
         // Propel.
-        self::propelInit($app);
+        self::propelInit();
         // DI.
         self::dependencies($app);
         // Routes
@@ -62,7 +66,7 @@ final class Kernel
         return $app;
     }
 
-    public static function loadConfig()
+    public static function loadConfig() : array
     {
         if (!file_exists(self::CONFIG)) {
             throw new LogicException('Configuration file not found');
@@ -71,7 +75,7 @@ final class Kernel
         return Yaml::parse(file_get_contents(self::CONFIG));
     }
 
-    public static function propelInit(Application $app)
+    public static function propelInit()
     {
         if (!file_exists(self::PROPEL_CONFIG)) {
             throw new LogicException('Propel configuration not found, please run `composer run sync` from the cli.');
@@ -96,7 +100,7 @@ final class Kernel
             return $app['puli.factory']->createRepository();
         };
         // PSR-7 Bridge
-        $app['psr7.bridge'] = function (Application $app) {
+        $app['psr7.bridge'] = function () {
             return new DiactorosFactory();
         };
         // Validator.
@@ -114,20 +118,33 @@ final class Kernel
         $app['propel.query.medium'] = function () : MediumArticleQuery {
             return new MediumArticleQuery();
         };
+
+        // Versions
+        $app['medium.versions'] = function () : VersionResolver {
+            $versions = new VersionResolver();
+            // Medium article list version 1.
+            $versions->accept(new MediaType(MediumClient::TYPE_MEDIUM_ARTICLE_LIST, 1), function ($articles) {
+                return MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+            }, true);
+            // All versions.
+            return $versions;
+        };
     }
 
     public static function routes(Application $app)
     {
         // Routes.
-        $app->get('/', function () use ($app) {
+        $app->get('/', function (Request $request) use ($app) {
 
             $articles = $app['propel.query.medium']
                 ->orderByPublished(Criteria::DESC)
                 ->limit(10)
                 ->find();
 
+            // @todo replace with accept parsing.
+            $accept = self::getAcceptHeader($request);
             // Map array of articles from database to response.
-            $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+            $data = $app['medium.versions']->resolve($accept, $articles);
             $json = $app['serializer']->serialize($data, 'json');
 
             return new Response($json, 200, $data->getHeaders());
@@ -145,7 +162,7 @@ final class Kernel
                 }
             }
             // Return the fresh data..
-            $data = MediumArticleMapper::mapResponseFromDatabaseResult($responseArticles);
+            $data = $app['medium.versions']->resolve('application/json', $articles);
             $json = $app['serializer']->serialize($data, 'json');
 
             return new Response($json, 200, $data->getHeaders());
@@ -168,7 +185,7 @@ final class Kernel
                     $article->save();
                     $articles[] = $article;
                 }
-                $data = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+                $data = $app['medium.versions']->resolve('application/json', $articles);
                 $json = $app['serializer']->serialize($data, 'json');
 
                 return new Response($json, 200, $data->getHeaders());
@@ -193,5 +210,10 @@ final class Kernel
             403,
             ['Content-Type' => 'application/json']
         );
+    }
+
+    public static function getAcceptHeader(Request $request) : string
+    {
+        return strpos($request->headers->get('Accept'), '*/*') !== false ? 'application/json' : (string) MediaType::fromString($request->headers->get('Accept'));
     }
 }
