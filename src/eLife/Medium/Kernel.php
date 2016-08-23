@@ -133,6 +133,21 @@ final class Kernel
         };
     }
 
+    public static function import(Application $app, string $mediumUsername) {
+        $data = $app['medium.client']->get('@'.$mediumUsername);
+        $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
+        $responseArticles = [];
+        foreach ($articles as $k => $article) {
+            $databaseArticle = (new MediumArticleQuery())->findOneByGuid($article->getGuid());
+            if (null === $databaseArticle) {
+                $article->save();
+                $responseArticles[] = $article;
+            }
+        }
+        // Return the fresh data..
+        return $responseArticles;
+    }
+
     public static function routes(Application $app)
     {
         // Routes.
@@ -151,26 +166,18 @@ final class Kernel
 
             return new Response($json, 200, $data->getHeaders());
         });
-
-        $app->get('/import/{mediumUsername}', function ($mediumUsername) use ($app) {
-            $data = $app['medium.client']->get('@'.$mediumUsername);
-            $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
-            $responseArticles = [];
-            foreach ($articles as $k => $article) {
-                $databaseArticle = (new MediumArticleQuery())->findOneByGuid($article->getGuid());
-                if (null === $databaseArticle) {
-                    $article->save();
-                    $responseArticles[] = $article;
-                }
-            }
-            // Return the fresh data..
-            $data = $app['medium.versions']->resolve('application/json', $articles);
-            $json = $app['serializer']->serialize($data, 'json');
-
-            return new Response($json, 200, $data->getHeaders());
-        });
-
         if ($app['config']['debug']) {
+
+            $app->get('/import/{mediumUsername}', function ($mediumUsername) use ($app) {
+
+                $articles = self::import($app, $mediumUsername);
+                // Return the fresh data..
+                $data = $app['medium.versions']->resolve('application/json', $articles);
+                $json = $app['serializer']->serialize($data, 'json');
+
+                return new Response($json, 200, $data->getHeaders());
+            });
+
             // this is only meant to provide.
             $app->get('/random-fixture/{num}', function ($num) use ($app) {
                 $articles = [];
