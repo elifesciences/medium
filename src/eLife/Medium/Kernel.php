@@ -36,7 +36,7 @@ final class Kernel
         // Load config
         $app['config'] = array_merge([
             'debug' => false,
-            'validate' => false
+            'validate' => false,
         ], $config);
         // Annotations.
         AnnotationRegistry::registerAutoloadNamespace(
