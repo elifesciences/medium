@@ -133,7 +133,8 @@ final class Kernel
         };
     }
 
-    public static function import(Application $app, string $mediumUsername) {
+    public static function import(Application $app, string $mediumUsername)
+    {
         $data = $app['medium.client']->get('@'.$mediumUsername);
         $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
         $responseArticles = [];
@@ -167,7 +168,6 @@ final class Kernel
             return new Response($json, 200, $data->getHeaders());
         });
         if ($app['config']['debug']) {
-
             $app->get('/import/{mediumUsername}', function ($mediumUsername) use ($app) {
 
                 $articles = self::import($app, $mediumUsername);
@@ -211,10 +211,7 @@ final class Kernel
 
     public static function handleException(Throwable $e, Application $app)
     {
-
-       
-        if ($e instanceof \Propel\Runtime\Connection\Exception\ConnectionException){
-
+        if ($e instanceof \Propel\Runtime\Connection\Exception\ConnectionException) {
             return new Response(
                 $app['serializer']->serialize(
                     new ExceptionResponse($e->getMessage()),
