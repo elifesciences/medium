@@ -204,6 +204,20 @@ final class Kernel
 
     public static function handleException(Throwable $e, Application $app)
     {
+
+       
+        if ($e instanceof \Propel\Runtime\Connection\Exception\ConnectionException){
+
+            return new Response(
+                $app['serializer']->serialize(
+                    new ExceptionResponse($e->getMessage()),
+                    'json'
+                ),
+                503,
+                ['Content-Type' => 'application/json']
+            );
+        }
+
         return new Response(
             $app['serializer']->serialize(
                 new ExceptionResponse($e->getMessage()),
