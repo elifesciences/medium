@@ -35,6 +35,7 @@ final class Kernel
         $app = new Application();
         // Load config
         $app['config'] = array_merge([
+            'ttl' => 3600,
             'debug' => false,
             'validate' => false,
         ], $config);
@@ -55,6 +56,13 @@ final class Kernel
                 self::validate($app, $request, $response);
             }
         }, 2);
+        // Cache.
+        $app->after(function (Request $request, Response $response) use ($app) {
+            // cache.
+            if ($app['config']['ttl'] > 0) {
+                self::cache($app, $request, $response);
+            }
+        }, 3);
 
         // Error handling.
         $app->error(function (Throwable $e) use ($app) {
@@ -208,6 +216,11 @@ final class Kernel
         $app['puli.validator']->validate(
             $app['psr7.bridge']->createResponse($response)
         );
+    }
+
+    public static function cache(Application $app, Request $request, Response $response)
+    {
+        $response->setTtl($app['config']['ttl']);
     }
 
     public static function handleException(Throwable $e, Application $app)
