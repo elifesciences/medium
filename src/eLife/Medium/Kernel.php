@@ -27,7 +27,6 @@ use Webmozart\Json\JsonDecoder;
 final class Kernel
 {
     const ROOT = __DIR__.'/../../..';
-    const CONFIG = self::ROOT.'/config.yml';
     const PROPEL_CONFIG = self::ROOT.'/cache/propel/conf/config.php';
 
     public static function create($config = []) : Application
@@ -35,7 +34,10 @@ final class Kernel
         // Create application.
         $app = new Application();
         // Load config
-        $app['config'] = array_merge($config, self::loadConfig());
+        $app['config'] = array_merge([
+            'debug' => false,
+            'validate' => false
+        ], $config);
         // Annotations.
         AnnotationRegistry::registerAutoloadNamespace(
             'JMS\Serializer\Annotation', self::ROOT.'/vendor/jms/serializer/src'
