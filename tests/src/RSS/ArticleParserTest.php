@@ -65,7 +65,7 @@ final class ArticleParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1*r8Dosc01-Cyo82eZo-oRMA.png', $image->getPath());
     }
 
-    public static $fixture = <<<XML
+    public static $fixture = <<<'XML'
 <?xml version="1.0" ?>
 <root>
     <items>

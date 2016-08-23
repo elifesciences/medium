@@ -6,6 +6,6 @@ use eLife\Medium\Kernel;
 
 $app = Kernel::create([
     'debug' => true,
-    'validate' => true
+    'validate' => true,
 ]);
 $app->run();
