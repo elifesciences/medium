@@ -153,7 +153,6 @@ final class Kernel
     {
         // Routes.
         $app->get('/', function (Request $request) use ($app) {
-
             $articles = $app['propel.query.medium']
                 ->orderByPublished(Criteria::DESC)
                 ->limit(10)
@@ -169,7 +168,6 @@ final class Kernel
         });
         if ($app['config']['debug']) {
             $app->get('/import/{mediumUsername}', function ($mediumUsername) use ($app) {
-
                 $articles = self::import($app, $mediumUsername);
                 // Return the fresh data..
                 $data = $app['medium.versions']->resolve('application/json', $articles);
