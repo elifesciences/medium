@@ -9,10 +9,12 @@ elifePipeline {
         builderProjectTests 'medium--ci', '/srv/medium', ['/srv/medium/build/phpunit.xml']
     }
 
-    //elifeMainlineOnly {
-    //    stage 'End2end tests'
+    elifeMainlineOnly {
+        stage 'Deploy on end2end'
+        builderDeployRevision 'medium--end2end', commit
+        builderSmokeTests 'medium--end2end', '/srv/medium'
 
-    //    stage 'Approval'
-    //    elifeGitMoveToBranch commit, 'approved'
-    //}
+        stage 'Approval'
+        elifeGitMoveToBranch commit, 'approved'
+    }
 }
