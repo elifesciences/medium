@@ -17,7 +17,8 @@
     },
     "autoload": {
         "psr-4": {
-            "eLife\\": "src/eLife"
+            "eLife\\": "src/eLife",
+            "eLife\\Medium\\": "cache/propel/src/eLife/Medium"
         }
     },
     "autoload-dev": {
