@@ -149,6 +149,9 @@ final class Kernel
         return $responseArticles;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ForbiddenDateTime)
+     */
     public static function routes(Application $app)
     {
         // Routes.

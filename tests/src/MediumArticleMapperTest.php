@@ -9,6 +9,9 @@ use eLife\Medium\Response\MediumArticleListResponse;
 use eLife\Medium\Response\MediumArticleResponse;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.ForbiddenDateTime)
+ */
 final class MediumArticleMapperTest extends PHPUnit_Framework_TestCase
 {
     /**

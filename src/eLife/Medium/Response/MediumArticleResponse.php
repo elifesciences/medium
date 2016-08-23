@@ -33,6 +33,9 @@ final class MediumArticleResponse
      */
     public $image;
 
+    /**
+     * @SuppressWarnings(PHPMD.ForbiddenDateTime)
+     */
     public function __construct(
         string $uri,
         string $title,
