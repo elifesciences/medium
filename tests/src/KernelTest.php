@@ -35,7 +35,7 @@ class KernelTest extends WebTestCase
         $this->app['propel.query.medium']->shouldReceive('find')->andReturn($fixtures);
 
         $client = $this->createClient();
-        $client->request('GET', '/');
+        $client->request('GET', '/medium-articles');
 
         $json = json_decode($client->getResponse()->getContent(), true);
 
@@ -55,7 +55,7 @@ class KernelTest extends WebTestCase
         $this->app['propel.query.medium']->shouldReceive('find')->andReturn([]);
 
         $client = $this->createClient();
-        $client->request('GET', '/');
+        $client->request('GET', '/medium-articles');
 
         $json = json_decode($client->getResponse()->getContent(), true);
 

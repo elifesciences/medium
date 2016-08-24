@@ -15,6 +15,7 @@ use GuzzleHttp\Client;
 use JMS\Serializer\SerializerBuilder;
 use LogicException;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Connection\Exception\ConnectionException;
 use SebastianBergmann\Version;
 use Silex\Application;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
@@ -163,7 +164,7 @@ final class Kernel
     public static function routes(Application $app)
     {
         // Routes.
-        $app->get('/', function (Request $request) use ($app) {
+        $app->get('/medium-articles', function (Request $request) use ($app) {
             $articles = $app['propel.query.medium']
                 ->orderByPublished(Criteria::DESC)
                 ->limit(10)
@@ -225,7 +226,7 @@ final class Kernel
 
     public static function handleException(Throwable $e, Application $app)
     {
-        if ($e instanceof \Propel\Runtime\Connection\Exception\ConnectionException) {
+        if ($e instanceof ConnectionException) {
             return new Response(
                 $app['serializer']->serialize(
                     new ExceptionResponse($e->getMessage()),
