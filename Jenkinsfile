@@ -16,5 +16,8 @@ elifePipeline {
 
         stage 'Approval'
         elifeGitMoveToBranch commit, 'approved'
+
+        stage 'Not production yet'
+        elifeGitMoveToBranch commit, 'master'
     }
 }
