@@ -2,11 +2,9 @@
 
 namespace eLife\Medium\Response;
 
-use eLife\ApiSdk\ApiClient\MediumClient;
-use eLife\ApiSdk\MediaType;
 use JMS\Serializer\Annotation\Type;
 
-final class MediumArticleListResponse implements HasHeaders
+final class MediumArticleListResponse implements HasHeaders, IsVersioned
 {
     /**
      * @Type("array<eLife\Medium\Response\MediumArticleResponse>")
@@ -24,10 +22,15 @@ final class MediumArticleListResponse implements HasHeaders
         $this->total = count($mediumArticles);
     }
 
+    public function getVersion() : bool
+    {
+        return 1;
+    }
+
     public function getHeaders() : array
     {
         return [
-            'Content-Type' => (string) new MediaType(MediumClient::TYPE_MEDIUM_ARTICLE_LIST, 1),
+            'Content-Type' => ContentType::MEDIUM_ARTICLE_LIST_V1,
         ];
     }
 }

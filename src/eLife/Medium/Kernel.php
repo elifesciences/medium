@@ -3,12 +3,11 @@
 namespace eLife\Medium;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use eLife\ApiSdk\ApiClient\MediumClient;
-use eLife\ApiSdk\MediaType;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Model\MediumArticleQuery;
+use eLife\Medium\Response\ContentType;
 use eLife\Medium\Response\ExceptionResponse;
 use eLife\Medium\Response\VersionResolver;
 use GuzzleHttp\Client;
@@ -21,7 +20,7 @@ use Silex\Application;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 use Webmozart\Json\JsonDecoder;
 
@@ -57,6 +56,7 @@ final class Kernel
                 self::validate($app, $request, $response);
             }
         }, 2);
+
         // Cache.
         $app->after(function (Request $request, Response $response) use ($app) {
             // cache.
@@ -75,15 +75,6 @@ final class Kernel
         });
 
         return $app;
-    }
-
-    public static function loadConfig() : array
-    {
-        if (!file_exists(self::CONFIG)) {
-            throw new LogicException('Configuration file not found');
-        }
-
-        return Yaml::parse(file_get_contents(self::CONFIG));
     }
 
     public static function propelInit()
@@ -134,28 +125,12 @@ final class Kernel
         $app['medium.versions'] = function () : VersionResolver {
             $versions = new VersionResolver();
             // Medium article list version 1.
-            $versions->accept(new MediaType(MediumClient::TYPE_MEDIUM_ARTICLE_LIST, 1), function ($articles) {
+            $versions->accept(ContentType::MEDIUM_ARTICLE_LIST_V1, function ($articles) {
                 return MediumArticleMapper::mapResponseFromDatabaseResult($articles);
             }, true);
             // All versions.
             return $versions;
         };
-    }
-
-    public static function import(Application $app, string $mediumUsername)
-    {
-        $data = $app['medium.client']->get('@'.$mediumUsername);
-        $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
-        $responseArticles = [];
-        foreach ($articles as $k => $article) {
-            $databaseArticle = (new MediumArticleQuery())->findOneByGuid($article->getGuid());
-            if (null === $databaseArticle) {
-                $article->save();
-                $responseArticles[] = $article;
-            }
-        }
-        // Return the fresh data..
-        return $responseArticles;
     }
 
     /**
@@ -225,6 +200,27 @@ final class Kernel
         }
     }
 
+    public static function getAcceptHeader(Request $request) : string
+    {
+        return strpos($request->headers->get('Accept'), '*/*') !== false ? 'application/json' : (string) MediaType::fromString($request->headers->get('Accept'));
+    }
+
+    public static function import(Application $app, string $mediumUsername)
+    {
+        $data = $app['medium.client']->get('@'.$mediumUsername);
+        $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
+        $responseArticles = [];
+        foreach ($articles as $k => $article) {
+            $databaseArticle = (new MediumArticleQuery())->findOneByGuid($article->getGuid());
+            if (null === $databaseArticle) {
+                $article->save();
+                $responseArticles[] = $article;
+            }
+        }
+        // Return the fresh data..
+        return $responseArticles;
+    }
+
     public static function validate(Application $app, Request $request, Response $response)
     {
         $app['puli.validator']->validate(
@@ -246,22 +242,28 @@ final class Kernel
                     'json'
                 ),
                 503,
-                ['Content-Type' => 'application/json']
+                ['Content-Type' => 'application/problem+json']
+            );
+        }
+
+        if ($e instanceof HttpExceptionInterface) {
+            return new Response(
+                $app['serializer']->serialize(
+                    new ExceptionResponse($e->getMessage()),
+                    'json'
+                ),
+                $e->getStatusCode(),
+                ['Content-Type' => 'application/problem+json']
             );
         }
 
         return new Response(
             $app['serializer']->serialize(
-                new ExceptionResponse($e->getMessage()),
+                new ExceptionResponse('Internal server error'),
                 'json'
             ),
-            403,
-            ['Content-Type' => 'application/json']
+            500,
+            ['Content-Type' => 'application/problem+json']
         );
-    }
-
-    public static function getAcceptHeader(Request $request) : string
-    {
-        return strpos($request->headers->get('Accept'), '*/*') !== false ? 'application/json' : (string) MediaType::fromString($request->headers->get('Accept'));
     }
 }

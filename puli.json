@@ -9,10 +9,6 @@
             "install-path": "vendor/beberlei/assert",
             "installer": "composer"
         },
-        "crell/api-problem": {
-            "install-path": "vendor/crell/api-problem",
-            "installer": "composer"
-        },
         "doctrine/annotations": {
             "install-path": "vendor/doctrine/annotations",
             "installer": "composer"
@@ -27,10 +23,6 @@
         },
         "elife/api": {
             "install-path": "vendor/elife/api",
-            "installer": "composer"
-        },
-        "elife/api-sdk": {
-            "install-path": "vendor/elife/api-sdk",
             "installer": "composer"
         },
         "elife/api-validator": {
@@ -77,7 +69,8 @@
         },
         "myclabs/deep-copy": {
             "install-path": "vendor/myclabs/deep-copy",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "paragonie/random_compat": {
             "install-path": "vendor/paragonie/random_compat",
@@ -89,15 +82,18 @@
         },
         "phpdocumentor/reflection-common": {
             "install-path": "vendor/phpdocumentor/reflection-common",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpdocumentor/reflection-docblock": {
             "install-path": "vendor/phpdocumentor/reflection-docblock",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpdocumentor/type-resolver": {
             "install-path": "vendor/phpdocumentor/type-resolver",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpoption/phpoption": {
             "install-path": "vendor/phpoption/phpoption",
@@ -105,35 +101,43 @@
         },
         "phpspec/prophecy": {
             "install-path": "vendor/phpspec/prophecy",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpunit/php-code-coverage": {
             "install-path": "vendor/phpunit/php-code-coverage",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpunit/php-file-iterator": {
             "install-path": "vendor/phpunit/php-file-iterator",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpunit/php-text-template": {
             "install-path": "vendor/phpunit/php-text-template",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpunit/php-timer": {
             "install-path": "vendor/phpunit/php-timer",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpunit/php-token-stream": {
             "install-path": "vendor/phpunit/php-token-stream",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpunit/phpunit": {
             "install-path": "vendor/phpunit/phpunit",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "phpunit/phpunit-mock-objects": {
             "install-path": "vendor/phpunit/phpunit-mock-objects",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "pimple/pimple": {
             "install-path": "vendor/pimple/pimple",
@@ -173,43 +177,53 @@
         },
         "sebastian/code-unit-reverse-lookup": {
             "install-path": "vendor/sebastian/code-unit-reverse-lookup",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/comparator": {
             "install-path": "vendor/sebastian/comparator",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/diff": {
             "install-path": "vendor/sebastian/diff",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/environment": {
             "install-path": "vendor/sebastian/environment",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/exporter": {
             "install-path": "vendor/sebastian/exporter",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/global-state": {
             "install-path": "vendor/sebastian/global-state",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/object-enumerator": {
             "install-path": "vendor/sebastian/object-enumerator",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/recursion-context": {
             "install-path": "vendor/sebastian/recursion-context",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/resource-operations": {
             "install-path": "vendor/sebastian/resource-operations",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "sebastian/version": {
             "install-path": "vendor/sebastian/version",
-            "installer": "composer"
+            "installer": "composer",
+            "env": "dev"
         },
         "seld/jsonlint": {
             "install-path": "vendor/seld/jsonlint",

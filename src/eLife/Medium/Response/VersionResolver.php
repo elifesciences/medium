@@ -2,6 +2,8 @@
 
 namespace eLife\Medium\Response;
 
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+
 /**
  * Version resolved.
  *
@@ -38,7 +40,7 @@ final class VersionResolver
         if (strtolower($acceptType) === 'application/json') {
             if (null === $this->default) {
                 // 406 exception if no default set.
-                throw new \Exception();
+                throw new NotAcceptableHttpException('Not acceptable response');
             }
             // Is generic application/json return default type.
             $resolver = $this->default;
@@ -47,7 +49,7 @@ final class VersionResolver
             $resolver = $this->version[$acceptType];
         } else {
             // 406 exception if not valid.
-            throw new \Exception();
+            throw new NotAcceptableHttpException('Not acceptable response');
         }
 
         return $resolver(...$args);
