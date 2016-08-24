@@ -67,6 +67,10 @@
             "installer": "composer",
             "env": "dev"
         },
+        "monolog/monolog": {
+            "install-path": "vendor/monolog/monolog",
+            "installer": "composer"
+        },
         "myclabs/deep-copy": {
             "install-path": "vendor/myclabs/deep-copy",
             "installer": "composer",
