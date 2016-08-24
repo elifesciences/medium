@@ -165,10 +165,23 @@ final class Kernel
     {
         // Routes.
         $app->get('/medium-articles', function (Request $request) use ($app) {
+            $page = $request->query->get('page', 1);
+            $perPage = $request->query->get('per-page', 20);
+
+            if ((int) $perPage > 100) {
+                $perPage = 100;
+            }
+
+            $order = $request->query->get('order', Criteria::DESC);
+
+            if (isset($order) && strtolower($order) === 'asc') {
+                $order = Criteria::ASC;
+            } else {
+                $order = Criteria::DESC;
+            }
             $articles = $app['propel.query.medium']
-                ->orderByPublished(Criteria::DESC)
-                ->limit(10)
-                ->find();
+                ->orderByPublished($order)
+                ->paginate($page, $perPage);
 
             // @todo replace with accept parsing.
             $accept = self::getAcceptHeader($request);
