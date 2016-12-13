@@ -49,6 +49,35 @@ class KernelTest extends WebTestCase
     /**
      * @test
      */
+    public function testGetWithDataAsc()
+    {
+        $fixtures = [
+            self::articleFixture(),
+            self::articleFixture(),
+            self::articleFixture(),
+            self::articleFixture(),
+        ];
+
+        $this->app['propel.query.medium'] = new Mock(MediumArticleQuery::class);
+        $this->app['propel.query.medium']->shouldReceive('orderByPublished')->andReturn($this->app['propel.query.medium']);
+        $this->app['propel.query.medium']->shouldReceive('paginate')->andReturn($fixtures);
+
+        $client = $this->createClient();
+        $client->request('GET', '/medium-articles?order=asc');
+
+        $json = json_decode($client->getResponse()->getContent(), true);
+
+        if (!$client->getResponse()->isOk()) {
+            $this->fail($json['message']);
+        }
+
+        $this->assertNotEmpty($json['items']);
+        $this->assertTrue($client->getResponse()->isOk()); // validation configuration ensures validity.
+    }
+
+    /**
+     * @test
+     */
     public function testGetWithEmptyDataSet()
     {
         $this->app['propel.query.medium'] = new Mock(MediumArticleQuery::class);

@@ -32,14 +32,19 @@ final class MediumArticleMapper
 
     public static function mapResponseFromMediumArticle(MediumArticle $article) : MediumArticleResponse
     {
+        $image = null;
+        if ($article->getImageDomain() && $article->getImagePath()) {
+            $image = new ImageResponse(
+            $article->getImageAlt(),
+            Image::basic($article->getImageDomain(), $article->getImagePath())
+          );
+        }
+
         return new MediumArticleResponse(
             $article->getUri(),
             $article->getTitle(),
             new \DateTimeImmutable($article->getPublished()->format('c')),
-            new ImageResponse(
-                $article->getImageAlt(),
-                Image::basic($article->getImageDomain(), $article->getImagePath())
-            ),
+            $image,
             $article->getImpactStatement()
         );
     }
@@ -62,6 +67,8 @@ final class MediumArticleMapper
                         if ($image) {
                             $article->setImageDomain($image->getDomain());
                             $article->setImagePath($image->getPath());
+                        } else {
+                            $article->setImageAlt(null);
                         }
                         $article->setImpactStatement($root->parseParagraph($node));
                         break;
