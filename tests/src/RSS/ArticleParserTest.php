@@ -65,11 +65,12 @@ final class ArticleParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1*r8Dosc01-Cyo82eZo-oRMA.png', $image->getPath());
     }
 
-    public function testParseImageFail() {
-      $parser = new ArticleParser(self::$fixture);
-      $image = $parser->parseImage('<b>NOT AN IMAGE</b>');
+    public function testParseImageFail()
+    {
+        $parser = new ArticleParser(self::$fixture);
+        $image = $parser->parseImage('<b>NOT AN IMAGE</b>');
 
-      $this->assertNull($image);
+        $this->assertNull($image);
     }
 
     public static $fixture = <<<'XML'
