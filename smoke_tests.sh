@@ -8,8 +8,8 @@ successResponse=$(curl --write-out %{http_code} --silent --output /dev/null ${ho
 
 if [ "$successResponse" == 200 ]
 then
-    exit 1
+    exit 0
 else
    curl ${host}/medium-articles
-   exit 0
+   exit 1
 fi
