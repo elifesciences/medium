@@ -36,7 +36,7 @@ final class ArticleParser
         return $para[0];
     }
 
-    public function parseImage($html)
+    public function parseImage($html) : ?Image
     {
         // @todo more robust solution.
         $matches = [];
