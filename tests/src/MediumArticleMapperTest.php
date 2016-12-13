@@ -102,32 +102,31 @@ final class MediumArticleMapperTest extends PHPUnit_Framework_TestCase
         }
     }
 
-  /**
-   * This test will be to detect BC if the mapping is changed. It will still pass if Medium changes their RSS.
-   *
-   * @test
-   */
-  public function testXmlToMediumArticleListWithoutImage()
-  {
-    $xml = file_get_contents(__DIR__.'/mediumWithoutImageFixture.xml');
+    /**
+     * This test will be to detect BC if the mapping is changed. It will still pass if Medium changes their RSS.
+     *
+     * @test
+     */
+    public function testXmlToMediumArticleListWithoutImage()
+    {
+        $xml = file_get_contents(__DIR__.'/mediumWithoutImageFixture.xml');
 
-    $articles = MediumArticleMapper::xmlToMediumArticleList($xml);
-    $this->assertNotEmpty($articles);
-    $this->assertContainsOnlyInstancesOf(MediumArticle::class, $articles);
+        $articles = MediumArticleMapper::xmlToMediumArticleList($xml);
+        $this->assertNotEmpty($articles);
+        $this->assertContainsOnlyInstancesOf(MediumArticle::class, $articles);
 
-    $article = array_shift($articles);
+        $article = array_shift($articles);
 
-    if ($article instanceof MediumArticle) {
-      $this->assertSame('"Fishing out the origin of joint lubrication for arthritis research" in Life on Earth', $article->getTitle());
-      $this->assertSame('https://medium.com/life-on-earth/fishing-out-the-origin-of-joint-lubrication-for-arthritis-research-6f75eb2c75a0', $article->getUri());
-      $this->assertSame('Lubricated joints evolved millions of years earlier than previously thought.', $article->getImpactStatement());
-      $this->assertSame('2016-08-19T11:11:01+00:00', $article->getPublished('c'));
-      $this->assertNull($article->getImageDomain());
-      $this->assertNull($article->getImagePath());
-      $this->assertNull($article->getImageAlt());
-//            $this->assertSame($article->getTitle(), $article->getImageAlt());
-    } else {
-      $this->fail('Article must be instance of MediumArticles');
+        if ($article instanceof MediumArticle) {
+            $this->assertSame('"Fishing out the origin of joint lubrication for arthritis research" in Life on Earth', $article->getTitle());
+            $this->assertSame('https://medium.com/life-on-earth/fishing-out-the-origin-of-joint-lubrication-for-arthritis-research-6f75eb2c75a0', $article->getUri());
+            $this->assertSame('Lubricated joints evolved millions of years earlier than previously thought.', $article->getImpactStatement());
+            $this->assertSame('2016-08-19T11:11:01+00:00', $article->getPublished('c'));
+            $this->assertNull($article->getImageDomain());
+            $this->assertNull($article->getImagePath());
+            $this->assertNull($article->getImageAlt());
+        } else {
+            $this->fail('Article must be instance of MediumArticles');
+        }
     }
-  }
 }
