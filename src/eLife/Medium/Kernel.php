@@ -3,6 +3,7 @@
 namespace eLife\Medium;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use eLife\ApiValidator\MediaType;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
 use eLife\Medium\Model\MediumArticle;
@@ -202,7 +203,11 @@ final class Kernel
 
     public static function getAcceptHeader(Request $request) : string
     {
-        return strpos($request->headers->get('Accept'), '*/*') !== false ? 'application/json' : (string) MediaType::fromString($request->headers->get('Accept'));
+        return
+          strpos($request->headers->get('Accept'), '*/*') !== false ?
+            'application/json' :
+            (string) MediaType::fromString($request->headers->get('Accept'))
+        ;
     }
 
     public static function import(Application $app, string $mediumUsername)
