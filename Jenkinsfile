@@ -14,9 +14,11 @@ elifePipeline {
     }
 
     elifeMainlineOnly {
-        stage 'Deploy on end2end', {
-            builderDeployRevision 'medium--end2end', commit
-            builderSmokeTests 'medium--end2end', '/srv/medium'
+        stage 'End2end tests', {
+            elifeEnd2endTest({
+                builderDeployRevision 'medium--end2end', commit
+                builderSmokeTests 'medium--end2end', '/srv/medium'
+            }, 'medium')
         }
 
         stage 'Approval', {
