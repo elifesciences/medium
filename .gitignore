@@ -3,6 +3,7 @@
 /cache/
 config.yaml
 /.puli
+/var
 propel.yml
 src/eLife/Medium/Model/Map/*
 src/eLife/Medium/Model/Base/*

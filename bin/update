@@ -5,30 +5,24 @@ namespace Cli;
 
 use eLife\Medium\Kernel;
 
-$green = function($text) {
-    return "\e[32m" . $text . "\e[39m";
-};
-$yellow = function($text) {
-    return "\e[33m" . $text . "\e[39m";
-};
-print $yellow('Fetching articles from medium.');
-
-include __DIR__ . '/../vendor/autoload.php';
+include __DIR__.'/../vendor/autoload.php';
 
 $app = Kernel::create();
-print $yellow('.');
+$logger = $app['logger'];
+try {
+    $logger->info('Fetching articles from Medium.');
 
-$articles = Kernel::import($app, 'eLife');
-print $yellow('.' . PHP_EOL);
+    $articles = Kernel::import($app, 'eLife');
 
-foreach ($articles as $article) {
-    print $green(PHP_EOL . 'Inserted: ') . $article->getTitle();
+    foreach ($articles as $article) {
+        $logger->info('Inserted: '.$article->getTitle());
+    }
+
+    if (empty($articles)) {
+        $logger->info('All up to date!');
+    } else {
+        $logger->info('Success! Added '.count($articles).' new articles.');
+    }
+} catch (Throwable $e) {
+    $logger->error('Cannot fetch articles from Medium.', ['exception' => $e]);
 }
-
-if (empty($articles)) {
-    print $green('All up to date!');
-} else {
-    print $green(PHP_EOL . PHP_EOL . 'Success! Added ' . count($articles) . ' new articles.');
-}
-
-print PHP_EOL;

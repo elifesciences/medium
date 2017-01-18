@@ -12,9 +12,9 @@ propel:
         schemaDir: ./
 
         # The directory where Propel should output generated object model classes.
-        phpDir: cache/propel/src
-        sqlDir: cache/propel/sql
-        phpConfDir: cache/propel/conf
+        phpDir: var/cache/propel/src
+        sqlDir: var/cache/propel/sql
+        phpConfDir: var/cache/propel/conf
 
 
 #   database:

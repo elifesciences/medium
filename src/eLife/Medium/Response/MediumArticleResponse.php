@@ -19,7 +19,7 @@ final class MediumArticleResponse
     public $title;
 
     /**
-     * @Type("DateTime<'c'>")
+     * @Type("DateTime<'Y-m-d\TH:i:s\Z'>")
      */
     public $published;
 
@@ -45,7 +45,7 @@ final class MediumArticleResponse
     ) {
         $this->uri = $uri;
         $this->title = $title;
-        $this->published = DateTime::createFromFormat('Y-m-d\TH:i:sO', $published->format('Y-m-d\TH:i:sO'), $published->getTimezone());
+        $this->published = DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $published->format('Y-m-d\TH:i:s\Z'), $published->getTimezone());
         $this->impactStatement = $impactStatement;
         $this->image = $image;
     }

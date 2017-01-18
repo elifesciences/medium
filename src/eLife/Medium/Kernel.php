@@ -6,6 +6,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use eLife\ApiValidator\MediaType;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
+use eLife\Logging\LoggingFactory;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Model\MediumArticleQuery;
 use eLife\Medium\Response\ContentType;
@@ -28,7 +29,7 @@ use Webmozart\Json\JsonDecoder;
 final class Kernel
 {
     const ROOT = __DIR__.'/../../..';
-    const PROPEL_CONFIG = self::ROOT.'/cache/propel/conf/config.php';
+    const PROPEL_CONFIG = self::ROOT.'/var/cache/propel/conf/config.php';
 
     public static function create($config = []) : Application
     {
@@ -68,6 +69,7 @@ final class Kernel
 
         // Error handling.
         $app->error(function (Throwable $e) use ($app) {
+            $app['logger']->error('Exception in serving request', ['exception' => $e]);
             if ($app['debug']) {
                 return null;
             }
@@ -90,7 +92,7 @@ final class Kernel
     {
         // Serializer.
         $app['serializer'] = function () {
-            return SerializerBuilder::create()->setCacheDir(self::ROOT.'/cache')->build();
+            return SerializerBuilder::create()->setCacheDir(self::ROOT.'/var/cache')->build();
         };
         // Puli.
         $app['puli.factory'] = function () {
@@ -131,6 +133,12 @@ final class Kernel
             }, true);
             // All versions.
             return $versions;
+        };
+
+        $app['logger'] = function () {
+            $factory = new LoggingFactory(self::ROOT.'/var/logs', 'medium');
+
+            return $factory->logger();
         };
     }
 
