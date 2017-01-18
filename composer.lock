@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "251bcff27d48405fb7a6ef92809c53f8",
+    "hash": "4b58b70c555f14d6def75f78f86b8935",
     "content-hash": "59e80180de04b2e9110a50531f891cf9",
     "packages": [
         {
@@ -386,12 +386,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/elifesciences/logging-sdk-php.git",
-                "reference": "05306b67f9e7c7f2ea378564a188da368a0f9adc"
+                "reference": "ddc23ec75b58a4fe2692e4cfae395bc03a49955d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elifesciences/logging-sdk-php/zipball/05306b67f9e7c7f2ea378564a188da368a0f9adc",
-                "reference": "05306b67f9e7c7f2ea378564a188da368a0f9adc",
+                "url": "https://api.github.com/repos/elifesciences/logging-sdk-php/zipball/ddc23ec75b58a4fe2692e4cfae395bc03a49955d",
+                "reference": "ddc23ec75b58a4fe2692e4cfae395bc03a49955d",
                 "shasum": ""
             },
             "require": {
@@ -399,6 +399,9 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "^5.6"
+            },
+            "suggest": {
+                "ext/newrelic": "Enables the Monitoring class"
             },
             "type": "library",
             "autoload": {
@@ -411,7 +414,7 @@
                 "MIT"
             ],
             "description": "eLife Sciences logging SDK",
-            "time": "2017-01-17 16:18:14"
+            "time": "2017-01-18 09:24:06"
         },
         {
             "name": "guzzlehttp/guzzle",

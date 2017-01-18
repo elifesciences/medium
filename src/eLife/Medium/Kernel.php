@@ -7,6 +7,7 @@ use eLife\ApiValidator\MediaType;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
 use eLife\Logging\LoggingFactory;
+use eLife\Logging\Monitoring;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Model\MediumArticleQuery;
 use eLife\Medium\Response\ContentType;
@@ -70,6 +71,7 @@ final class Kernel
         // Error handling.
         $app->error(function (Throwable $e) use ($app) {
             $app['logger']->error('Exception in serving request', ['exception' => $e]);
+            $app['monitoring']->recordException($e, 'Exception in serving request');
             if ($app['debug']) {
                 return null;
             }
@@ -139,6 +141,10 @@ final class Kernel
             $factory = new LoggingFactory(self::ROOT.'/var/logs', 'medium');
 
             return $factory->logger();
+        };
+
+        $app['monitoring'] = function () {
+            return new Monitoring();
         };
     }
 

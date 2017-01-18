@@ -9,6 +9,7 @@ include __DIR__.'/../vendor/autoload.php';
 
 $app = Kernel::create();
 $logger = $app['logger'];
+$app['monitoring']->markAsBackground();
 try {
     $logger->info('Fetching articles from Medium.');
 
