@@ -40,7 +40,7 @@ final class MediumArticleResponse
         string $uri,
         string $title,
         DateTimeImmutable $published,
-        ImageResponse $image,
+        ImageResponse $image = null,
         string $impactStatement = null
     ) {
         $this->uri = $uri;
