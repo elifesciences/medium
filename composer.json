@@ -26,9 +26,9 @@
         }
     },
     "scripts": {
-        "setup": "propel build && propel sql:build && propel config:convert",
+        "sync": "propel build && propel sql:build && propel config:convert",
         "database": "propel sql:insert",
-        "sync": "propel build && propel sql:build --overwrite && propel sql:insert && propel config:convert",
+        "setup": "propel build && propel sql:build && propel sql:insert && propel config:convert",
         "cache:clear" : "rm -rf ./var/cache/metadata && rm -rf ./var/cache/annotations",
         "server": "php -S 0.0.0.0:8088 -t web web/app_dev.php",
         "server:prod": "php -S 0.0.0.0:8088 -t web web/app_prod.php"
