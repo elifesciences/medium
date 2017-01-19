@@ -35,7 +35,7 @@ final class ArticleParser
         if (!isset($pieces[1])) {
             return '';
         }
-        $para = explode('</', $pieces[1]);
+        $para = explode('</p', $pieces[1]);
 
         return $para[0];
     }

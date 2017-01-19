@@ -38,9 +38,6 @@ final class ArticleParserTest extends PHPUnit_Framework_TestCase
         $text = $parser->parseParagraph('<b>some other html before</b><p class="medium-feed-snippet">Find me?</p><p>some other paragraph after</p>');
         $this->assertEquals('Find me?', $text);
 
-        $text = $parser->parseParagraph('<p class="medium-feed-snippet">Find me?</b>');
-        $this->assertEquals('Find me?', $text, 'Parser makes best guess with invalid input');
-
         $text = $parser->parseParagraph('<p class="medium-feed-snippet">Find me?');
         $this->assertEquals('Find me?', $text, 'Parser makes best guess with invalid input');
 
