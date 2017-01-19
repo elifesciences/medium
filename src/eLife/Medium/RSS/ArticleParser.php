@@ -26,16 +26,21 @@ final class ArticleParser
 
     public function parseParagraph($html) : string
     {
-        // This gets the first paragraph without regex.
+        // Find the start of the paragraph start tag.
         $pieces = explode('<p', $html);
         if (!isset($pieces[1])) {
             return '';
         }
+        // Find the end of the paragraph start tag.
         $pieces = explode('>', $pieces[1]);
         if (!isset($pieces[1])) {
             return '';
         }
-        $para = explode('</p', $pieces[1]);
+        array_shift($pieces);
+        $para_contents = implode('>', $pieces);
+
+        // Find the end of the paragraph.
+        $para = explode('</p', $para_contents);
 
         return $para[0];
     }

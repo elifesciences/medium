@@ -43,6 +43,12 @@ final class ArticleParserTest extends PHPUnit_Framework_TestCase
 
         $text = $parser->parseParagraph('<b>no paragraph</b>');
         $this->assertEquals('', $text);
+
+        $text = $parser->parseParagraph('<p>no class on paragraph</p>');
+        $this->assertEquals('no class on paragraph', $text);
+
+        $text = $parser->parseParagraph('<p>no class on paragraph <a href="#">with link</a></p>');
+        $this->assertEquals('no class on paragraph <a href="#">with link</a>', $text);
     }
 
     public function testParseImage()
