@@ -81,7 +81,7 @@ final class MediumArticleMapperTest extends PHPUnit_Framework_TestCase
      */
     public function testXmlToMediumArticleList()
     {
-        $xml = file_get_contents(__DIR__.'/mediumFixture.xml');
+        $xml = file_get_contents(__DIR__.'/mediumFixture_19-01-17.xml');
 
         $articles = MediumArticleMapper::xmlToMediumArticleList($xml);
         $this->assertNotEmpty($articles);
@@ -109,7 +109,7 @@ final class MediumArticleMapperTest extends PHPUnit_Framework_TestCase
      */
     public function testXmlToMediumArticleListWithoutImage()
     {
-        $xml = file_get_contents(__DIR__.'/mediumWithoutImageFixture.xml');
+        $xml = file_get_contents(__DIR__.'/mediumWithoutImageFixture_19-01-17.xml');
 
         $articles = MediumArticleMapper::xmlToMediumArticleList($xml);
         $this->assertNotEmpty($articles);

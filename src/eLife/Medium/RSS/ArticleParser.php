@@ -27,7 +27,11 @@ final class ArticleParser
     public function parseParagraph($html) : string
     {
         // This gets the first paragraph without regex.
-        $pieces = explode('<p>', $html);
+        $pieces = explode('<p', $html);
+        if (!isset($pieces[1])) {
+            return '';
+        }
+        $pieces = explode('>', $pieces[1]);
         if (!isset($pieces[1])) {
             return '';
         }
