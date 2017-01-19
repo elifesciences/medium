@@ -26,8 +26,8 @@ final class ArticleParser
 
     public function parseParagraph($html) : string
     {
-        // @todo more robust solution.
-        $pieces = explode('class="medium-feed-snippet">', $html);
+        // This gets the first paragraph without regex.
+        $pieces = explode('<p>', $html);
         if (!isset($pieces[1])) {
             return '';
         }

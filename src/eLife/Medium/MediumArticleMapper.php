@@ -53,10 +53,21 @@ final class MediumArticleMapper
     {
         $root = new ArticleParser($xmlString);
         $articles = [];
-
         foreach ($root->getItems() as $item) {
+            /* @var \SimpleXMLIterator $item */
             $article = new MediumArticle();
+            foreach ($item->xpath('./content:encoded') as $content) {
+                $image = $root->parseImage($content);
+                if ($image) {
+                    $article->setImageDomain($image->getDomain());
+                    $article->setImagePath($image->getPath());
+                } else {
+                    $article->setImageAlt(null);
+                }
+                $article->setImpactStatement($root->parseParagraph($content));
+            }
             foreach ($item as $node_type => $node) {
+                /* @var \SimpleXMLIterator $node */
                 switch ($node_type) {
                     case 'title':
                         $article->setTitle((string) $node);
