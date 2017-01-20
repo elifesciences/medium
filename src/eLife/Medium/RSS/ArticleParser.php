@@ -29,13 +29,14 @@ final class ArticleParser
     {
         $crawler = new Crawler((string) $html);
         $paragraphs = $crawler->filterXPath('//p');
+        $text = '';
         foreach ($paragraphs as $paragraph) {
             /** @var \DOMElement $paragraph */
             if ($text = $paragraph->textContent) {
-                return $text;
+                break;
             }
         }
-        return '';
+        return $text;
     }
 
     public function parseImage($html)
