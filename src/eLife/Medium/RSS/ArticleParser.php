@@ -36,6 +36,7 @@ final class ArticleParser
                 break;
             }
         }
+
         return $text;
     }
 
