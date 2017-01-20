@@ -264,8 +264,7 @@
         },
         "symfony/dom-crawler": {
             "install-path": "vendor/symfony/dom-crawler",
-            "installer": "composer",
-            "env": "dev"
+            "installer": "composer"
         },
         "symfony/event-dispatcher": {
             "install-path": "vendor/symfony/event-dispatcher",
