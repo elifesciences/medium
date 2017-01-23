@@ -4,6 +4,7 @@ namespace eLife\Medium\RSS;
 
 use eLife\Medium\Model\Image;
 use SimpleXMLIterator;
+use Symfony\Component\DomCrawler\Crawler;
 
 final class ArticleParser
 {
@@ -26,14 +27,17 @@ final class ArticleParser
 
     public function parseParagraph($html) : string
     {
-        // @todo more robust solution.
-        $pieces = explode('class="medium-feed-snippet">', $html);
-        if (!isset($pieces[1])) {
-            return '';
+        $crawler = new Crawler((string) $html);
+        $paragraphs = $crawler->filterXPath('//p');
+        $text = '';
+        foreach ($paragraphs as $paragraph) {
+            /** @var \DOMElement $paragraph */
+            if ($text = $paragraph->textContent) {
+                break;
+            }
         }
-        $para = explode('</', $pieces[1]);
 
-        return $para[0];
+        return $text;
     }
 
     public function parseImage($html)

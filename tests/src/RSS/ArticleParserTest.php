@@ -38,14 +38,21 @@ final class ArticleParserTest extends PHPUnit_Framework_TestCase
         $text = $parser->parseParagraph('<b>some other html before</b><p class="medium-feed-snippet">Find me?</p><p>some other paragraph after</p>');
         $this->assertEquals('Find me?', $text);
 
-        $text = $parser->parseParagraph('<p class="medium-feed-snippet">Find me?</b>');
-        $this->assertEquals('Find me?', $text, 'Parser makes best guess with invalid input');
-
         $text = $parser->parseParagraph('<p class="medium-feed-snippet">Find me?');
         $this->assertEquals('Find me?', $text, 'Parser makes best guess with invalid input');
 
         $text = $parser->parseParagraph('<b>no paragraph</b>');
         $this->assertEquals('', $text);
+
+        $text = $parser->parseParagraph('<p>no class on paragraph</p>');
+        $this->assertEquals('no class on paragraph', $text);
+
+        // I'm not sure why this works.
+        $text = $parser->parseParagraph('<p>no class on paragraph<p>Nested paragraph</p></p>');
+        $this->assertEquals('no class on paragraph', $text);
+
+        $text = $parser->parseParagraph('<p>no class on paragraph <a href="#">with link</a></p>');
+        $this->assertEquals('no class on paragraph with link', $text);
     }
 
     public function testParseImage()
