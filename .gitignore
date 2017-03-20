@@ -2,7 +2,6 @@
 /vendor/
 /cache/
 config.yaml
-/.puli
 /var
 propel.yml
 src/eLife/Medium/Model/Map/*

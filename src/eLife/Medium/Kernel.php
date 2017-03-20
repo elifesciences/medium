@@ -2,10 +2,11 @@
 
 namespace eLife\Medium;
 
+use ComposerLocator;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use eLife\ApiValidator\MediaType;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
-use eLife\ApiValidator\SchemaFinder\PuliSchemaFinder;
+use eLife\ApiValidator\SchemaFinder\PathBasedSchemaFinder;
 use eLife\Logging\LoggingFactory;
 use eLife\Logging\Monitoring;
 use eLife\Medium\Model\MediumArticle;
@@ -15,6 +16,7 @@ use eLife\Medium\Response\ExceptionResponse;
 use eLife\Medium\Response\VersionResolver;
 use GuzzleHttp\Client;
 use JMS\Serializer\SerializerBuilder;
+use JsonSchema\Validator;
 use LogicException;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Connection\Exception\ConnectionException;
@@ -25,7 +27,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
-use Webmozart\Json\JsonDecoder;
 
 final class Kernel
 {
@@ -96,25 +97,15 @@ final class Kernel
         $app['serializer'] = function () {
             return SerializerBuilder::create()->setCacheDir(self::ROOT.'/var/cache')->build();
         };
-        // Puli.
-        $app['puli.factory'] = function () {
-            $factoryClass = PULI_FACTORY_CLASS;
-
-            return new $factoryClass();
-        };
-        // Puli repo.
-        $app['puli.repository'] = function (Application $app) {
-            return $app['puli.factory']->createRepository();
-        };
         // PSR-7 Bridge
         $app['psr7.bridge'] = function () {
             return new DiactorosFactory();
         };
         // Validator.
-        $app['puli.validator'] = function (Application $app) {
+        $app['message-validator'] = function (Application $app) {
             return new JsonMessageValidator(
-                new PuliSchemaFinder($app['puli.repository']),
-                new JsonDecoder()
+                new PathBasedSchemaFinder(ComposerLocator::getPath('elife/api').'/dist/model'),
+                new Validator()
             );
         };
         // Medium Guzzle client.
@@ -242,7 +233,7 @@ final class Kernel
 
     public static function validate(Application $app, Request $request, Response $response)
     {
-        $app['puli.validator']->validate(
+        $app['message-validator']->validate(
             $app['psr7.bridge']->createResponse($response)
         );
     }
