@@ -20,6 +20,21 @@ class KernelTest extends WebTestCase
     /**
      * @test
      */
+    public function testPing()
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/ping');
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('pong', $response->getContent());
+        $this->assertEquals('text/plain; charset=UTF-8', $response->headers->get('Content-Type'));
+        $this->assertEquals('must-revalidate, no-cache, no-store, private', $response->headers->get('Cache-Control'));
+    }
+
+    /**
+     * @test
+     */
     public function testGetWithData()
     {
         $fixtures = [

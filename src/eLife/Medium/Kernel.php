@@ -64,9 +64,6 @@ final class Kernel
         // Cache.
         $app->after(function (Request $request, Response $response) use ($app) {
             // cache.
-            if ($app['config']['ttl'] > 0) {
-                self::cache($app, $request, $response);
-            }
         }, 3);
 
         // Error handling.
@@ -171,6 +168,17 @@ final class Kernel
             $json = $app['serializer']->serialize($data, 'json');
 
             return new Response($json, 200, $data->getHeaders());
+        });
+
+        $app->get('/ping', function () {
+            return new Response(
+                'pong',
+                200,
+                [
+                    'Cache-Control' => 'must-revalidate, no-cache, no-store, private',
+                    'Content-Type' => 'text/plain; charset=UTF-8',
+                ]
+            );
         });
         if ($app['config']['debug']) {
             $app->get('/import/{mediumUsername}', function ($mediumUsername) use ($app) {
