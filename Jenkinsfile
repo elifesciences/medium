@@ -16,14 +16,11 @@ elifePipeline {
     elifeMainlineOnly {
         stage 'End2end tests', {
             elifeSpectrum(
-                preliminaryStep: {
-                    builderDeployRevision 'medium--end2end', commit
-                    builderSmokeTests 'medium--end2end', '/srv/medium'
-                },
-                rollbackStep: {
-                    builderDeployRevision 'medium--end2end', 'approved'
-                    builderSmokeTests 'medium--end2end', '/srv/medium'
-                },
+                deploy: [
+                    stackname: 'medium--end2end',
+                    revision: commit,
+                    folder: '/srv/medium'
+                ],
                 marker: 'medium'
             )
         }
