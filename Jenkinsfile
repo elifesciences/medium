@@ -15,10 +15,17 @@ elifePipeline {
 
     elifeMainlineOnly {
         stage 'End2end tests', {
-            elifeEnd2endTest({
-                builderDeployRevision 'medium--end2end', commit
-                builderSmokeTests 'medium--end2end', '/srv/medium'
-            }, 'medium')
+            elifeSpectrum(
+                preliminaryStep: {
+                    builderDeployRevision 'medium--end2end', commit
+                    builderSmokeTests 'medium--end2end', '/srv/medium'
+                },
+                rollbackStep: {
+                    builderDeployRevision 'medium--end2end', 'approved'
+                    builderSmokeTests 'medium--end2end', '/srv/medium'
+                },
+                marker: 'medium'
+            )
         }
 
         stage 'Approval', {
