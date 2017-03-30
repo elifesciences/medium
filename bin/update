@@ -4,6 +4,7 @@
 namespace Cli;
 
 use eLife\Medium\Kernel;
+use Throwable;
 
 include __DIR__.'/../vendor/autoload.php';
 
