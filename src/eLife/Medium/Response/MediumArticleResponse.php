@@ -28,10 +28,11 @@ final class MediumArticleResponse
      */
     public $impactStatement;
 
-    /**
-     * @Type("eLife\Medium\Response\ImageResponse")
-     */
-    public $image;
+    // needs to be updated for IIIF
+    ///**
+    // * @Type("eLife\Medium\Response\ImageResponse")
+    // */
+    //public $image;
 
     /**
      * @SuppressWarnings(PHPMD.ForbiddenDateTime)
@@ -47,6 +48,6 @@ final class MediumArticleResponse
         $this->title = $title;
         $this->published = DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $published->format('Y-m-d\TH:i:s\Z'), $published->getTimezone());
         $this->impactStatement = $impactStatement;
-        $this->image = $image;
+        //$this->image = $image;
     }
 }
