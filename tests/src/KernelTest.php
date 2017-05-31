@@ -32,6 +32,30 @@ class KernelTest extends WebTestCase
         $this->assertEquals('must-revalidate, no-cache, no-store, private', $response->headers->get('Cache-Control'));
     }
 
+    public function testCacheHeaders()
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/medium-articles');
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('max-age=300, public, stale-if-error=86400, stale-while-revalidate=300', $response->headers->get('Cache-Control'));
+        $this->assertEquals('Accept', $response->headers->get('Vary'));
+        $this->assertEquals(md5($client->getResponse()->getContent()), $response->headers->get('ETag'));
+    }
+
+    public function testCacheHeadersAuth()
+    {
+        $client = $this->createClient();
+        $client->request('GET', '/medium-articles', array(), array(), array('HTTP_X-Consumer-Groups' => 'admin'));
+        $response = $client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('max-age=0, must-revalidate, private', $response->headers->get('Cache-Control'));
+        $this->assertEquals('Accept', $response->headers->get('Vary'));
+        $this->assertEquals(md5($client->getResponse()->getContent()), $response->headers->get('ETag'));
+    }
+
     /**
      * @test
      */
