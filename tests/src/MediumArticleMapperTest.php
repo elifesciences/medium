@@ -5,6 +5,8 @@ namespace tests\eLife\Medium;
 use eLife\Medium\MediumArticleMapper;
 use eLife\Medium\Model\MediumArticle;
 use eLife\Medium\Response\ImageResponse;
+use eLife\Medium\Response\ImageSizeResponse;
+use eLife\Medium\Response\ImageSourceResponse;
 use eLife\Medium\Response\MediumArticleListResponse;
 use eLife\Medium\Response\MediumArticleResponse;
 use PHPUnit_Framework_TestCase;
@@ -24,7 +26,7 @@ final class MediumArticleMapperTest extends PHPUnit_Framework_TestCase
             self::articleFixture(),
             self::articleFixture(),
         ];
-        $articleResponse = MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+        $articleResponse = MediumArticleMapper::mapResponseFromDatabaseResult($articles, 'https://iiif/');
 
         $this->assertInstanceOf(MediumArticleListResponse::class, $articleResponse);
         $this->assertNotEmpty($articleResponse->getHeaders());
@@ -64,15 +66,26 @@ final class MediumArticleMapperTest extends PHPUnit_Framework_TestCase
         $article->setImageDomain('cdn-images-1.medium.com');
         $article->setImagePath('1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg');
         $article->setImageAlt('alt text');
+        $article->setImageMediaType('image/jpeg');
+        $article->setImageWidth(1000);
+        $article->setImageHeight(500);
 
-        $articleResponse = MediumArticleMapper::mapResponseFromMediumArticle($article);
+        $articleResponse = MediumArticleMapper::mapResponseFromMediumArticle($article, 'https://iiif/');
 
         $this->assertSame($article->getTitle(), $articleResponse->title);
         $this->assertSame($article->getUri(), $articleResponse->uri);
         $this->assertSame($article->getImpactStatement(), $articleResponse->impactStatement);
         $this->assertSame($article->getPublished('c'), $articleResponse->published->format('c'));
-        // needs to be updated for IIIF
-        //$this->assertInstanceOf(ImageResponse::class, $articleResponse->image);
+        $this->assertInstanceOf(ImageResponse::class, $articleResponse->image);
+        $this->assertSame('https://iiif/1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg', $articleResponse->image->uri);
+        $this->assertSame('alt text', $articleResponse->image->alt);
+        $this->assertInstanceOf(ImageSourceResponse::class, $articleResponse->image->source);
+        $this->assertSame('https://cdn-images-1.medium.com/1*eDBmGJ3a3IkqSp6HhAFqPQ.jpeg', $articleResponse->image->source->uri);
+        $this->assertSame('image/jpeg', $articleResponse->image->source->mediaType);
+        $this->assertSame('1 eDBmGJ3a3IkqSp6HhAFqPQ.jpeg', $articleResponse->image->source->filename);
+        $this->assertInstanceOf(ImageSizeResponse::class, $articleResponse->image->size);
+        $this->assertSame(1000, $articleResponse->image->size->width);
+        $this->assertSame(500, $articleResponse->image->size->height);
     }
 
     /**

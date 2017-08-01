@@ -16,7 +16,9 @@
         "doctrine/cache": "^1.6",
         "symfony/dom-crawler": "^3.2",
         "justinrainbow/json-schema": "^5.1",
-        "mindplay/composer-locator": "^2.1"
+        "mindplay/composer-locator": "^2.1",
+        "guzzlehttp/psr7": "^1.4",
+        "symfony/filesystem": "^3.3"
     },
     "autoload": {
         "psr-4": {
@@ -30,7 +32,7 @@
         }
     },
     "scripts": {
-        "sync": "propel build && propel sql:build && propel config:convert",
+        "sync": "propel build && propel sql:build && propel config:convert && propel migrate",
         "database": "propel sql:insert",
         "setup": "propel build && propel sql:build && propel sql:insert && propel config:convert",
         "cache:clear" : "rm -rf ./var/cache/metadata && rm -rf ./var/cache/annotations",

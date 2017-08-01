@@ -8,8 +8,11 @@
         <column name="uri" type="varchar" required="true"/>
         <column name="published" type="timestamp" required="true"/>
         <column name="impact_statement" type="varchar" required="false"/>
-        <column name="image_domain" type="varchar" required="true"/>
-        <column name="image_path" type="varchar" required="true"/>
-        <column name="image_alt" type="varchar" required="true"/>
+        <column name="image_domain" type="varchar" required="false"/>
+        <column name="image_path" type="varchar" required="false"/>
+        <column name="image_alt" type="varchar" required="false"/>
+        <column name="image_media_type" type="varchar" required="false"/>
+        <column name="image_width" type="integer" required="false"/>
+        <column name="image_height" type="integer" required="false"/>
     </table>
 </database>

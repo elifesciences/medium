@@ -5,6 +5,7 @@ namespace eLife\Medium;
 use ComposerLocator;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use eLife\ApiValidator\MediaType;
+use eLife\ApiValidator\MessageValidator\FakeHttpsMessageValidator;
 use eLife\ApiValidator\MessageValidator\JsonMessageValidator;
 use eLife\ApiValidator\SchemaFinder\PathBasedSchemaFinder;
 use eLife\Logging\LoggingFactory;
@@ -20,18 +21,23 @@ use JsonSchema\Validator;
 use LogicException;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Connection\Exception\ConnectionException;
+use RuntimeException;
 use SebastianBergmann\Version;
 use Silex\Application;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
+use function GuzzleHttp\Psr7\try_fopen;
 
 final class Kernel
 {
     const ROOT = __DIR__.'/../../..';
+    const IMAGE_FOLDER = self::ROOT.'/web/images';
     const PROPEL_CONFIG = self::ROOT.'/var/cache/propel/conf/config.php';
+    const CONFIG = self::ROOT.'/config.php';
 
     public static function create($config = []) : Application
     {
@@ -39,7 +45,9 @@ final class Kernel
         $app = new Application();
         // Load config
         $app['config'] = array_merge(
+            include self::CONFIG,
             [
+            'iiif' => 'http://localhost/',
             'ttl' => 3600,
             'debug' => false,
             'validate' => false,
@@ -108,10 +116,10 @@ final class Kernel
         };
         // Validator.
         $app['message-validator'] = function (Application $app) {
-            return new JsonMessageValidator(
+            return new FakeHttpsMessageValidator(new JsonMessageValidator(
                 new PathBasedSchemaFinder(ComposerLocator::getPath('elife/api').'/dist/model'),
                 new Validator()
-            );
+            ));
         };
         // Medium Guzzle client.
         $app['medium.client'] = function () : Client {
@@ -123,12 +131,12 @@ final class Kernel
         };
 
         // Versions
-        $app['medium.versions'] = function () : VersionResolver {
+        $app['medium.versions'] = function () use ($app) : VersionResolver {
             $versions = new VersionResolver();
             // Medium article list version 1.
             $versions->accept(
-                ContentType::MEDIUM_ARTICLE_LIST_V1, function ($articles) {
-                    return MediumArticleMapper::mapResponseFromDatabaseResult($articles);
+                ContentType::MEDIUM_ARTICLE_LIST_V1, function ($articles) use ($app) {
+                    return MediumArticleMapper::mapResponseFromDatabaseResult($articles, $app['config']['iiif']);
                 }, true
             );
             // All versions.
@@ -143,6 +151,10 @@ final class Kernel
 
         $app['monitoring'] = function () {
             return new Monitoring();
+        };
+
+        $app['filesystem'] = function () {
+            return new Filesystem();
         };
     }
 
@@ -263,9 +275,28 @@ final class Kernel
         $articles = MediumArticleMapper::xmlToMediumArticleList($data->getBody());
         $responseArticles = [];
         foreach ($articles as $k => $article) {
-            $databaseArticle = (new MediumArticleQuery())->findOneByGuid($article->getGuid());
-            if (null === $databaseArticle) {
-                $article->save();
+            $imageFile = self::IMAGE_FOLDER.'/'.$article->getImagePath();
+            if (!is_file($imageFile) && !empty($article->getImagePath())) {
+                $file = try_fopen($imageFile, 'wb');
+
+                try {
+                    $image = $app['medium.client']->get("https://{$article->getImageDomain()}/{$article->getImagePath()}", ['sink' => $file]);
+                    if (!in_array($image->getHeaderLine('Content-Type'), ['image/jpeg', 'image/png'])) {
+                        $app['filesystem']->remove($imageFile);
+
+                        throw new RuntimeException("Expected image, got '{$image->getHeaderLine('Content-Type')}'");
+                    }
+                } finally {
+                    fclose($file);
+                }
+
+                $image = getimagesize($imageFile);
+
+                $article->setImageMediaType($image['mime']);
+                $article->setImageWidth($image[0]);
+                $article->setImageHeight($image[1]);
+            }
+            if ($article->save() > 0) {
                 $responseArticles[] = $article;
             }
         }

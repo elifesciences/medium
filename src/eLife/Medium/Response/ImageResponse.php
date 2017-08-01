@@ -2,7 +2,6 @@
 
 namespace eLife\Medium\Response;
 
-use elife\Medium\Model\Image;
 use JMS\Serializer\Annotation\Type;
 
 final class ImageResponse
@@ -10,29 +9,28 @@ final class ImageResponse
     /**
      * @Type("string")
      */
+    public $uri;
+
+    /**
+     * @Type("string")
+     */
     public $alt;
 
     /**
-     * @Type("array<string, array<integer,string>>")
+     * @Type("eLife\Medium\Response\ImageSourceResponse")
      */
-    public $sizes;
+    public $source;
 
-    public function __construct(string $alt, Image $image)
+    /**
+     * @Type("eLife\Medium\Response\ImageSizeResponse")
+     */
+    public $size;
+
+    public function __construct(string $uri, string $alt, ImageSourceResponse $source, ImageSizeResponse $size)
     {
+        $this->uri = $uri;
         $this->alt = $alt;
-        $this->sizes = [
-            '2:1' => [
-                900 => $image->crop(900, 450),
-                1800 => $image->crop(1800, 900),
-            ],
-            '16:9' => [
-                250 => $image->crop(250, 141),
-                500 => $image->crop(500, 281),
-            ],
-            '1:1' => [
-                70 => $image->crop(70),
-                140 => $image->crop(140),
-            ],
-        ];
+        $this->source = $source;
+        $this->size = $size;
     }
 }
