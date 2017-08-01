@@ -45,13 +45,14 @@ final class Kernel
         $app = new Application();
         // Load config
         $app['config'] = array_merge(
-            include self::CONFIG,
             [
-            'iiif' => 'http://localhost/',
-            'ttl' => 3600,
-            'debug' => false,
-            'validate' => false,
-            ], $config
+                'iiif' => 'http://localhost/',
+                'ttl' => 3600,
+                'debug' => false,
+                'validate' => false,
+            ],
+            include self::CONFIG,
+            $config
         );
         // Annotations.
         AnnotationRegistry::registerAutoloadNamespace(
