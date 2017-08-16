@@ -25,6 +25,13 @@ elifePipeline {
             )
         }
 
+        stage 'Deploy to continuumtest', {
+            lock('medium--continuumtest') {
+                builderDeployRevision 'medium--continuumtest', commit
+                builderSmokeTests 'medium--continuumtest', '/srv/medium'
+            }
+        }
+
         stage 'Approval', {
             elifeGitMoveToBranch commit, 'approved'
         }
