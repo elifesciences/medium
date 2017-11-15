@@ -15,6 +15,7 @@ use eLife\Medium\Model\MediumArticleQuery;
 use eLife\Medium\Response\ContentType;
 use eLife\Medium\Response\ExceptionResponse;
 use eLife\Medium\Response\VersionResolver;
+use eLife\Ping\Silex\PingControllerProvider;
 use GuzzleHttp\Client;
 use JMS\Serializer\SerializerBuilder;
 use JsonSchema\Validator;
@@ -54,6 +55,7 @@ final class Kernel
             include self::CONFIG,
             $config
         );
+        $app->register(new PingControllerProvider());
         // Annotations.
         AnnotationRegistry::registerAutoloadNamespace(
             'JMS\Serializer\Annotation', self::ROOT.'/vendor/jms/serializer/src'
@@ -203,18 +205,6 @@ final class Kernel
             }
         );
 
-        $app->get(
-            '/ping', function () {
-                return new Response(
-                    'pong',
-                    200,
-                    [
-                    'Cache-Control' => 'must-revalidate, no-cache, no-store, private',
-                    'Content-Type' => 'text/plain; charset=UTF-8',
-                    ]
-                );
-            }
-        );
         if ($app['config']['debug']) {
             $app->get(
                 '/import/{mediumUsername}', function ($mediumUsername) use ($app) {
