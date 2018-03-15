@@ -18,7 +18,7 @@ final class ArticleParser
     {
         foreach ($this->iterableBody as $items) {
             foreach ($items as $node_key => $item) {
-                if ($node_key === 'item') {
+                if ('item' === $node_key) {
                     yield $item;
                 }
             }

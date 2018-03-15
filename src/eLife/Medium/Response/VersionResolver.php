@@ -37,7 +37,7 @@ final class VersionResolver
 
     public function resolve(string $acceptType, ...$args)
     {
-        if (strtolower($acceptType) === 'application/json') {
+        if ('application/json' === strtolower($acceptType)) {
             if (null === $this->default) {
                 // 406 exception if no default set.
                 throw new NotAcceptableHttpException('No default response type set');

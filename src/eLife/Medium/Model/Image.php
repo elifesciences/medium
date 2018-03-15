@@ -34,7 +34,7 @@ final class Image
         $domain = array_shift($pieces);
         // Type
         $type = array_shift($pieces);
-        if ($type === 'fit') {
+        if ('fit' === $type) {
             // extra type (c)
             array_shift($pieces);
             // height

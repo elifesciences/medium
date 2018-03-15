@@ -178,7 +178,7 @@ final class Kernel
 
                 $order = $request->query->get('order', Criteria::DESC);
 
-                if (isset($order) && strtolower($order) === 'asc') {
+                if (isset($order) && 'asc' === strtolower($order)) {
                     $order = Criteria::ASC;
                 } else {
                     $order = Criteria::DESC;
@@ -246,14 +246,14 @@ final class Kernel
     public static function getAcceptHeader(Request $request) : string
     {
         return
-          strpos($request->headers->get('Accept'), '*/*') !== false ?
+          false !== strpos($request->headers->get('Accept'), '*/*') ?
             'application/json' :
             (string) MediaType::fromString($request->headers->get('Accept'));
     }
 
     public static function isAuth(Request $request) : bool
     {
-        if ($request->headers->get('X-Consumer-Groups') == 'admin') {
+        if ('admin' == $request->headers->get('X-Consumer-Groups')) {
             return true;
         } else {
             return false;

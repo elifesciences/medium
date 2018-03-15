@@ -1,9 +1,7 @@
 /build/*
 /vendor/
-/cache/
 /config.php
+/.php_cs.cache
 /var
 propel.yml
-src/eLife/Medium/Model/Map/*
-src/eLife/Medium/Model/Base/*
 /web/images/
